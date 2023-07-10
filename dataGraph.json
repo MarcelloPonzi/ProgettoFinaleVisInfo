@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "nome": "Claudio Calpurni",
+      "giocatore": "Nello B.",
+      "ruolo": "General Manager, futuro Capofamiglia, secondo in comando",
+      "tipo": "PG",
+      "backgroud": "",
+      "info": "",
+      "tratti": ""
+    },
+    {
+      "id": "2",
+      "nome": "Flavia Calpurni",
+      "gicoatore": "Irene D.E.",
+      "ruolo": "",
+      "isPlayable": 1,
+      "background": "",
+      "info": "",
+      "carattere": ""
+    },
+    {    
+    "id": "3",
+    "nome": "Patrizia Nava",
+    "giocatore": "Matilde F.",
+    "ruolo": "Relazioni Santa Sede",
+    "tipo": "PG",
+    "backgroud": "",
+    "info": "",
+    "tratti": "Avida, arrampicatrice sociale, calma"
+  }
+  ],
+  "links": [
+    {
+      "source": "1",
+      "target": "2",
+      "color": "blue",
+      "label": "fratelli",
+      "type": "0"
+    }
+  ]
+}
