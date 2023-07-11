@@ -1,3 +1,6 @@
+import { createInfoSection } from "./infoSection.js";
+import * as idHandler from './idHandler.js';
+
 window.addEventListener('DOMContentLoaded', function () {
   var parentElement = document.getElementById("svg-container");
   var parentWidth = parentElement.clientWidth;
@@ -10,24 +13,48 @@ window.addEventListener('DOMContentLoaded', function () {
     var svg = d3.select("#svg-container")
       .append("svg")
       .attr("width", parentWidth)
-      .attr("height", parentHeight);
+      .attr("height", parentHeight)
+      .on("contextmenu", function (event) {
+        // Previeni il comportamento predefinito del browser
+        event.preventDefault();
+        createNodePopup();
+      });
 
     // Definisci i dati del grafo e crea una mappa per associare gli ID dei nodi ai nodi stessi 
     var nodes = data.nodes;
     var links = data.links;
-    var nodeMap = new Map();
+    var nodesMap = new Map();
+    var linksMap = new Map();
 
-    // Crea gli elementi del grafo
+    // Inizializza gli array con gli ID
+    var nodesIds = idHandler.createNodesIds()
+    var linksIds = idHandler.createLinksIds()
+
+    // Aggiungi i nodi alla mappa
     nodes.forEach(function (node) {
-      nodeMap.set(node.id, node);
+      nodesMap.set(node.id, node);
     });
+
+    // Aggiungi i link alla mappa
+    links.forEach(function (link) {
+      linksMap.set(link.id, link);
+    });
+
+
+    // Crea gli ID e controlla quali di questi sono già utilizzati dai nodi caricati dal json
+    nodesIds = idHandler.usedIdChecker(nodesIds, nodesMap);
+    linksIds = idHandler.usedIdChecker(linksIds, linksMap);
+    console.log("Array filtrati")
+    console.log(nodesIds)
+    console.log(linksIds)
+
 
     // Crea i link del grafo
     var linkElements = svg.selectAll("line")
       .data(links)
       .enter()
       .append("line")
-      .attr("stroke", function (d) { console.log(d); return d.color; });
+      .attr("stroke", function (d) { return d.color; });
 
     // Aggiungi l'etichetta a ogni link
     var linkLabelElements = svg.selectAll(".link-label")
@@ -47,16 +74,16 @@ window.addEventListener('DOMContentLoaded', function () {
       .append("circle")
       .attr("r", parentWidth / 100)
       .attr("fill", "red")
-      .on("mouseover", function (event, d) { showPopup(d.id) })
-      .on("mouseout", hidePopup)
-      .on("click", function (event, d) { createInfoSection(d.id) });
+      .on("mouseover", function (event, d) { showInfoPopup(d.id) })
+      .on("mouseout", removeInfoPopup)
+      .on("click", function (event, d) { createInfoSection(nodesMap, d.id) });
 
     // Aggiungi l'etichetta a ogni nodo
     var nodeLabelElements = svg.selectAll(".node-label")
       .data(nodes)
       .enter()
       .append("text")
-      .text(function (d) { console.log(d); return d.nome; })
+      .text(function (d) { return d.nome; })
       .attr("class", "node-label")
       .attr("text-anchor", "middle")
       .attr("font-size", "12px")
@@ -91,18 +118,18 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     // Funzione di callback per mostrare la finestra pop-up
-    function showPopup(id) {
+    function showInfoPopup(id) {
       // Crea un elemento div per la finestra pop-up
       var popup = document.createElement("div");
-      var nodo = nodeMap.get(id)
+      var nodo = nodesMap.get(id)
       popup.className = "popup";
       popup.innerHTML =
         "Nome personaggio: " + nodo.nome + "<br>" +
-        "Tipo: " + nodo.tipo + "<br>" +
-        "Nome giocatore: " + nodo.giocatore + "<br>" +
+        nodo.tipo + " interpretato da " + nodo.giocatore + "<br>" +
         "Ruolo: " + nodo.ruolo + "<br>" +
-        "Info: " + nodo.info + "<br>" +
-        "Tratti: " + nodo.tratti;
+        "Età: " + nodo.età + "<br>" +
+        "Tratti: " + nodo.tratti + "<br>" +
+        "Movente: " + nodo.movente;
 
       // Posiziona la finestra pop-up sopra il nodo corrente
       popup.style.top = (nodo.y + parentElement.offsetTop - 150) + "px";
@@ -112,7 +139,7 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     // Funzione di callback per nascondere la finestra pop-up
-    function hidePopup() {
+    function removeInfoPopup() {
       // Rimuovi tutti gli elementi con la classe "popup"
       var popups = document.getElementsByClassName("popup");
       while (popups.length > 0) {
@@ -120,25 +147,31 @@ window.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    function createInfoSection(id) {
-      var nodo = nodeMap.get(id)
-      // Crea un elemento div per la sezione delle informazioni
-      var infoSection = document.createElement("div");
-      var title = document.createElement("h2");
-      infoSection.className = "info-section";
-      title.innerHTML = nodo.nome;
-      infoSection.appendChild(title);
+    function createNodePopup() {
+      // Crea un elemento div per il popup
+      const popup = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("left", event.clientX + "px")
+        .style("top", event.clientY + "px")
+        .style("background-color", "white")
+        .style("border", "1px solid black")
+        .style("padding", "10px");
 
-      // Aggiungi un pulsante per chiudere la sezione delle informazioni
-      var closeButton = document.createElement("button");
-      closeButton.className = "close-button";
-      closeButton.innerHTML = "X";
-      closeButton.onclick = function () {
-        infoSection.remove();
-      };
-      infoSection.appendChild(closeButton);
-      document.body.appendChild(infoSection);
+      // Aggiungi del testo al popup
+      popup.append("p")
+        .text("Hai cliccato con il tasto destro del mouse!");
+
+      // Aggiungi un pulsante per chiudere il popup
+      popup.append("button")
+        .text("Chiudi")
+        .on("click", function () {
+          popup.remove();
+        });
+
     }
+
+
 
   })
     .catch(function (error) {

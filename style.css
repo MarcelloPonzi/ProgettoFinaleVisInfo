@@ -20,15 +20,16 @@ html, body {
   }
 
   /* Stile per la sezione delle informazioni */
-.info-section {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 400px;
-  height: 100%;
-  background-color: #f1f1f1;
-  padding: 20px;
-}
+  .info-section {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 20%; 
+    height: 100%;
+    background-color: #f1f1f1;
+    padding: 20px;
+    overflow-y: auto; /* Aggiungi la barra di scorrimento verticale se il contenuto supera l'altezza della sezione */
+  }
 
 
 .close-button {
@@ -39,4 +40,23 @@ html, body {
   border: none;
   background-color: #ff0000;
   cursor: pointer;
+}
+
+.info-section input[type="text"] {
+  display: block;
+  width:80%; 
+  margin-bottom: 10px;
+}
+
+/* Stile per i campi di input di tipo "textarea" */
+.info-section textarea {
+  display: block;
+  width: 90%;
+  height: 100px; /* Imposta l'altezza del campo di input */
+  margin-bottom: 10px;
+  resize: vertical; /* Consenti all'utente di ridimensionare il campo di input verticalmente */
+}
+
+.info-label {
+  /* Aggiungi qui le regole CSS per personalizzare lo stile dei campi di testo */
 }
