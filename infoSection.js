@@ -1,75 +1,60 @@
 export function createInfoSection(nodeMap, id) {
-    var nodo = nodeMap.get(id)
+    var nodo = nodeMap.get(id);
 
     // Controlla che non esista già la info section
-    var existingInfoSection = document.querySelector(".info-section");
-    if (existingInfoSection) {
+    var existingInfoSection = d3.select(".info-section");
+    if (!existingInfoSection.empty()) {
         existingInfoSection.remove();
     }
 
     // Crea un elemento div per la sezione delle informazioni
-    var infoSection = document.createElement("div");
-    var title = document.createElement("h2");
-    infoSection.className = "info-section";
-    title.innerHTML = nodo.nome;
-    infoSection.appendChild(title);
+    var infoSection = d3.select("body")
+        .append("div")
+        .attr("class", "info-section");
+
+    infoSection.append("h2")
+        .text(nodo.nome);
 
     // Aggiungi un pulsante per chiudere la sezione delle informazioni
-    var closeButton = document.createElement("button");
-    closeButton.className = "close-button";
-    closeButton.innerHTML = "X";
-    closeButton.onclick = function () {
-        infoSection.remove();
-    };
-    infoSection.appendChild(closeButton);
+    infoSection.append("button")
+        .attr("class", "close-button")
+        .text("X")
+        .on("click", function () {
+            infoSection.remove();
+        });
 
     // Aggiungi le informazioni del nodo alla sezione delle informazioni
-    var nomeLabel = document.createElement("label");
-    nomeLabel.innerHTML = "Nome:";
-    infoSection.appendChild(nomeLabel);
-    var nomeInput = document.createElement("input");
-    nomeInput.type = "text";
-    nomeInput.value = nodo.nome;
-    infoSection.appendChild(nomeInput);
+    infoSection.append("label")
+        .text("Nome:");
+    infoSection.append("input")
+        .attr("type", "text")
+        .attr("value", nodo.nome);
 
-    var giocatoreLabel = document.createElement("label");
-    giocatoreLabel.innerHTML = "Giocatore:";
-    infoSection.appendChild(giocatoreLabel);
-    var giocatoreInput = document.createElement("input");
-    giocatoreInput.type = "text";
-    giocatoreInput.value = nodo.giocatore;
-    infoSection.appendChild(giocatoreInput);
+    infoSection.append("label")
+        .text("Giocatore:");
+    infoSection.append("input")
+        .attr("type", "text")
+        .attr("value", nodo.giocatore);
 
-    var ruoloLabel = document.createElement("label");
-    ruoloLabel.innerHTML = "Ruolo:";
-    infoSection.appendChild(ruoloLabel);
-    var ruoloInput = document.createElement("input");
-    ruoloInput.type = "text";
-    ruoloInput.value = nodo.ruolo;
-    infoSection.appendChild(ruoloInput);
+    infoSection.append("label")
+        .text("Ruolo:");
+    infoSection.append("input")
+        .attr("type", "text")
+        .attr("value", nodo.ruolo);
 
-    var trattiLabel = document.createElement("label");
-    trattiLabel.innerHTML = "Tratti:";
-    infoSection.appendChild(trattiLabel);
-    var trattiInput = document.createElement("input");
-    trattiInput.type = "text";
-    trattiInput.value = nodo.tratti;
-    infoSection.appendChild(trattiInput);
+    infoSection.append("label")
+        .text("Tratti:");
+    infoSection.append("input")
+        .attr("type", "text")
+        .attr("value", nodo.tratti);
 
-    var infoLabel = document.createElement("label");
-    infoLabel.innerHTML = "Info:";
-    infoSection.appendChild(infoLabel);
-    var infoInput = document.createElement("textarea");
-    infoInput.value = nodo.info;
-    infoSection.appendChild(infoInput);
+    infoSection.append("label")
+        .text("Info:");
+    infoSection.append("textarea")
+        .text(nodo.info);
 
-    var backgroundLabel = document.createElement("label");
-    backgroundLabel.innerHTML = "Background:";
-    infoSection.appendChild(backgroundLabel);
-    var backgroundInput = document.createElement("textarea");
-    backgroundInput.value = nodo.background;
-    infoSection.appendChild(backgroundInput);
-
-    //Aggiungi la sezione info al corpo della pagina
-    document.body.appendChild(infoSection);
+    infoSection.append("label")
+        .text("Background:");
+    infoSection.append("textarea")
+        .text(nodo.background);
 }

@@ -17,7 +17,7 @@ export function createNodesIds() {
     return arr;
 }
 
-export function assignNodeId(node) {
+export function assignNodeId(nodesIds, node) {
     if (nodesIds.length === 0) {
         throw new Error("No more IDs available for nodes");
     }

@@ -60,3 +60,9 @@ html, body {
 .info-label {
   /* Aggiungi qui le regole CSS per personalizzare lo stile dei campi di testo */
 }
+
+.newnode-popup {
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+}
