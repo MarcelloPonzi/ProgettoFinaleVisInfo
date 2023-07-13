@@ -1,5 +1,5 @@
-const MAX_LINKS = 10; // rimetti a 300
-const MAX_NODES = 10; // rimetti a 30
+const MAX_LINKS = 300; // rimetti a 300
+const MAX_NODES = 30; // rimetti a 30
 
 
 export function usedIdChecker(idsArray, map) {
@@ -17,7 +17,7 @@ export function createNodesIds() {
     return arr;
 }
 
-export function assignNodeId(nodesIds, node) {
+export function assignNodeId(node, nodesIds) {
     if (nodesIds.length === 0) {
         throw new Error("No more IDs available for nodes");
     }
@@ -41,7 +41,7 @@ export function createLinksIds() {
 }
 
 
-export function assignLinkId(link) {
+export function assignLinkId(link, linksIds) {
     if (linksIds.length === 0) {
         throw new Error("No more IDs available for links");
     }

@@ -45,7 +45,7 @@
       "target": 2,
       "color": "blue",
       "label": "fratelli",
-      "type": "0"
+      "type": 0
     },
     {
       "id":2,
@@ -53,7 +53,7 @@
       "target": 1,
       "color": "yellow",
       "label": "lavora per",
-      "type": "1"
+      "type": 1
     }
   ]
 }

@@ -61,7 +61,17 @@ html, body {
   /* Aggiungi qui le regole CSS per personalizzare lo stile dei campi di testo */
 }
 
+.popup-text {
+  font-weight: bold;
+}
+
 .newnode-popup {
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.newlink-popup {
   background-color: white;
   border: 1px solid black;
   padding: 10px;

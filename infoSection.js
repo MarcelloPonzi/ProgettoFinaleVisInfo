@@ -49,6 +49,11 @@ export function createInfoSection(nodeMap, id) {
         .attr("value", nodo.tratti);
 
     infoSection.append("label")
+        .text("Movente:");
+    infoSection.append("textarea")
+        .text(nodo.movente);
+
+    infoSection.append("label")
         .text("Info:");
     infoSection.append("textarea")
         .text(nodo.info);

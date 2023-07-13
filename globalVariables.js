@@ -5,3 +5,4 @@ export var svg = d3.select("#svg-container")
     .append("svg")
     .attr("width", parentWidth)
     .attr("height", parentHeight)
+export const DEFAULT_COLOR = "blue"
