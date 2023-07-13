@@ -31,26 +31,17 @@ export function deleteNode() {
 }
 
 export function createLink(nodeSource, nodesMap, links, linksIds, linksMap) {
-    var link;
-
     setUpLink(nodeSource, nodesMap)
         .then(function (link) {
             // Usa il link creato
             console.log(link);
-
             idHandler.assignLinkId(link, linksIds)
             linksMap.set(link.id, link)
             links.push(link)
+            console.log("Nuovo link:")
+            console.log(link)
             app.drawLinkElements();
             app.drawLinkLabels();
-            console.log("Nuovo link creato: ");
-            console.log(link);
-            console.log("Array link: ");
-            console.log(links);
-            console.log("Mappa link: ");
-            console.log(linksMap);
-            console.log("Array ID: ");
-            console.log(linksIds);
             updateGraph();
         })
         .catch(function (error) {
@@ -91,14 +82,22 @@ function setUpLink(nodeSource, nodesMap) {
         var nodeTarget;
         console.log("Creo un nuovo link");
 
-        esecuzioneAsincrona().then(function (circleId) {
-            console.log("Circle cliccato:", circleId);
+        var circles = d3.selectAll("circle");
 
-            // Continua l'esecuzione normale del codice
-            console.log("Esecuzione ripresa");
+        var originalClickListener = function (event, d) {
+            var circleId = d.id;
+
+            resolve(circleId);
+        };
+
+        var clickListener = function (event, d) {
+            originalClickListener(event, d);
+
+            // Rimuovi il listener di click aggiunto da esecuzioneAsincrona()
+            circles.on("click", null);
 
             // Aggiorna il nodo di destinazione con l'id del circle cliccato
-            nodeTarget = nodesMap.get(circleId);
+            nodeTarget = nodesMap.get(d.id);
 
             // Creazione del link con il nodo di origine e di destinazione
             var link = {
@@ -112,10 +111,9 @@ function setUpLink(nodeSource, nodesMap) {
 
             // Risolvi la promessa con il link creato
             resolve(link);
-        }).catch(function (error) {
-            console.error("Errore:", error);
-            reject(error);
-        });
+        };
+
+        circles.on("click", clickListener);
     });
 }
 
@@ -127,8 +125,6 @@ function esecuzioneAsincrona() {
 
         circles.on("click", function (event, d) {
             var circleId = d.id;
-
-            circles.on("click", null);
 
             resolve(circleId);
         });
