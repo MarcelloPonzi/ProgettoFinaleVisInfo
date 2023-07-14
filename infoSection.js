@@ -31,14 +31,8 @@ export function createInfoSection(id) {
         .attr("class", "delete-button")
         .text("Cancella nodo")
         .on("click", function () {
-            // Rimuovi la grafica del nodo
-            svg.selectAll(".node")
-                .filter(function (d) { return d.id === id; })
-                .remove();
-            svg.selectAll(".node-label")
-                .filter(function (d) { return d.nome === nodo.nome; })
-                .remove();
-            graphManager.deleteNode(id);
+            graphManager.deleteNodeDraw(id)
+            graphManager.deleteNode(id)
             infoSection.remove();
         });
 
@@ -114,14 +108,7 @@ export function createLinkInfoSection(id) {
         .attr("class", "delete-button")
         .text("Cancella link")
         .on("click", function () {
-            // Rimuovi la grafica del nodo
-            svg.selectAll(".link")
-                .filter(function (d) { return d.id === id; })
-                .remove();
-            svg.selectAll(".link-label")
-                .filter(function (d) { return d.id === id; })
-                .remove();
-            graphManager.deleteLink(id);
+            graphManager.deleteLink(id)
             infoSection.remove();
         });
 
@@ -132,13 +119,6 @@ export function createLinkInfoSection(id) {
     infoSection.append("input")
         .attr("type", "text")
         .attr("value", link.label)
-        .on("change", function () {
-            var newLabel = d3.select(this).property("value");
-            link.label = newLabel;
-            svg.selectAll(".link-label")
-                .filter(function (d) { return d.label === link.label; })
-                .text(newLabel);
-        });
 
     infoSection.append("label")
         .text("Colore:");

@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', async function () {
     openFileButton.remove()
     newGraphButton.remove()
   })
-  saveFileButton.addEventListener("click", function () { saveJSONToFile() })
+  saveFileButton.addEventListener("click", function () { graphManager.saveJSONToFile() })
   openFileButton.addEventListener("click", async function () {
     try {
       // Chiamata a chooseFile() e attesa della risoluzione della promessa
@@ -376,65 +376,7 @@ async function chooseFile() {
   });
 }
 
-function saveJSONToFile() {
-  // Crea un oggetto per il file JSON
-  console.log("Provo a salvare")
-  var data = {
-    nodes: [],
-    links: []
-  };
 
-  // Aggiungi i nodi al file JSON
-  nodesMap.forEach(function (node) {
-    var nodeData = {
-      id: node.id,
-      nome: node.nome,
-      giocatore: node.giocatore,
-      ruolo: node.ruolo,
-      tipo: node.tipo,
-      background: node.background,
-      info: node.info,
-      tratti: node.tratti,
-      età: node.età,
-      movente: node.movente
-    };
-
-    data.nodes.push(nodeData);
-  });
-
-  // Aggiungi i link al file JSON
-  linksMap.forEach(function (link) {
-    var linkData = {
-      id: link.id,
-      source: link.source.id,
-      target: link.target.id,
-      color: link.color,
-      label: link.label,
-      type: link.type
-    };
-
-    data.links.push(linkData);
-  });
-
-  // Converti l'oggetto in una stringa JSON
-  var jsonString = JSON.stringify(data, null, 2);
-
-  // Crea un oggetto Blob dal JSON
-  var blob = new Blob([jsonString], { type: "application/json" });
-
-  // Crea una finestra di dialogo del filesystem per scegliere il nome del file e la posizione di salvataggio
-  var link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "data.json";
-  // Aggiungi il link al documento HTML
-  document.body.appendChild(link);
-
-  // Simula il click sul link per avviare il download
-  link.click();
-
-  // Rimuovi il link dal documento HTML
-  document.body.removeChild(link);
-}
 
 
 

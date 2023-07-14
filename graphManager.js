@@ -1,5 +1,5 @@
 import * as idHandler from './idHandler.js'
-import { DEFAULT_COLOR } from './globalVariables.js'
+import { svg, DEFAULT_COLOR } from './globalVariables.js'
 import { createInfoSection } from "./infoSection.js";
 import * as app from './app.js'
 import { nodes, nodesMap, links, linksMap } from './app.js'
@@ -28,6 +28,7 @@ export function createNode(x, y) {
 }
 
 export function deleteNode(id) {
+    deleteNodeDraw(id)
     // Rimuovi il nodo dall'array nodes
     var nodeIndex = nodes.findIndex(function (node) {
         return node.id === id;
@@ -75,6 +76,7 @@ export function createLink(nodeSource) {
 }
 
 export function deleteLink(id) {
+    deleteLinkDraw(id)
     // Rimuovi il link dall'array links
     var linkIndex = links.findIndex(function (l) {
         return l.id === id;
@@ -86,10 +88,6 @@ export function deleteLink(id) {
     // Rimuovi il link dalla mappa linksMap
     linksMap.delete(id);
     updateGraph();
-}
-
-export function saveJson() {
-
 }
 
 function setUpNode(x, y) {
@@ -141,6 +139,86 @@ function setUpLink(nodeSource) {
         // Aggiungi il listener di click ai circle
         circles.on("click", clickListener);
     });
+}
+
+export function saveJSONToFile() {
+    // Crea un oggetto per il file JSON
+    console.log("Provo a salvare")
+    var data = {
+        nodes: [],
+        links: []
+    };
+
+    // Aggiungi i nodi al file JSON
+    nodesMap.forEach(function (node) {
+        var nodeData = {
+            id: node.id,
+            nome: node.nome,
+            giocatore: node.giocatore,
+            ruolo: node.ruolo,
+            tipo: node.tipo,
+            background: node.background,
+            info: node.info,
+            tratti: node.tratti,
+            età: node.età,
+            movente: node.movente
+        };
+
+        data.nodes.push(nodeData);
+    });
+
+    // Aggiungi i link al file JSON
+    linksMap.forEach(function (link) {
+        var linkData = {
+            id: link.id,
+            source: link.source.id,
+            target: link.target.id,
+            color: link.color,
+            label: link.label,
+            type: link.type
+        };
+
+        data.links.push(linkData);
+    });
+
+    // Converti l'oggetto in una stringa JSON
+    var jsonString = JSON.stringify(data, null, 2);
+
+    // Crea un oggetto Blob dal JSON
+    var blob = new Blob([jsonString], { type: "application/json" });
+
+    // Crea una finestra di dialogo del filesystem per scegliere il nome del file e la posizione di salvataggio
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "data.json";
+    // Aggiungi il link al documento HTML
+    document.body.appendChild(link);
+
+    // Simula il click sul link per avviare il download
+    link.click();
+
+    // Rimuovi il link dal documento HTML
+    document.body.removeChild(link);
+}
+
+// Cancella la grafica del nodo e della relativa label
+export function deleteNodeDraw(id) {
+    svg.selectAll(".node")
+        .filter(function (d) { return d.id === id; })
+        .remove();
+    svg.selectAll(".node-label")
+        .filter(function (d) { return d.id === id; })
+        .remove();
+}
+
+// Cancella la grafica del link e della relativa label
+export function deleteLinkDraw(id) {
+    svg.selectAll(".link")
+        .filter(function (d) { return d.id === id; })
+        .remove();
+    svg.selectAll(".link-label")
+        .filter(function (d) { return d.id === id; })
+        .remove();
 }
 
 function updateGraph() {
