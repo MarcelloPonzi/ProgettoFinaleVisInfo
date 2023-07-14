@@ -35,7 +35,7 @@ export function createInfoSection(id) {
             graphManager.deleteNode(id)
             infoSection.remove();
         });
-
+    infoSection.append("br")
     // Aggiungi le informazioni del nodo alla sezione delle informazioni
     infoSection.append("label")
         .text("Nome:");
