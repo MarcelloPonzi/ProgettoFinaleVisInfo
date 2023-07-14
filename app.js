@@ -11,52 +11,64 @@ var linksMap = new Map();
 var nodesIds;
 var linksIds;
 
-window.addEventListener('DOMContentLoaded', function () {
-  // Carica il file JSON
-  d3.json("dataGraph.json").then(function (data) {
-    // Funzione di callback che viene chiamata quando il file JSON è stato caricato correttamente
-    svg.on("contextmenu", function (event) {
-      // Previeni il comportamento predefinito del browser
-      event.preventDefault();
-      closeOpenedPopups();
-      createNodePopup(event, nodes, nodesIds, nodesMap);
-    });
-    svg.on("click", function (event) { closeOpenedPopups(); });
-
-    // Definisci i dati del grafo e crea una mappa per associare gli ID dei nodi ai nodi stessi 
-    nodes = data.nodes;
-    links = data.links;
-
-    // Inizializza gli array con gli ID
-    nodesIds = idHandler.createNodesIds()
-    linksIds = idHandler.createLinksIds()
-
-    // Aggiungi i nodi alla mappa
-    nodes.forEach(function (node) {
-      nodesMap.set(node.id, node);
-    });
-
-    // Aggiungi i link alla mappa
-    links.forEach(function (link) {
-      linksMap.set(link.id, link);
-    });
+window.addEventListener('DOMContentLoaded', async function () {
+  var openFileButton = document.getElementById("openFileButton");
+  openFileButton.addEventListener("click", async function () {
+    try {
+      // Chiamata a chooseFile() e attesa della risoluzione della promessa
+      var selectedFileName = await chooseFile();
+      console.log("File selezionato:", selectedFileName);
 
 
-    // Crea gli ID e controlla quali di questi sono già utilizzati dai nodi caricati dal json
-    nodesIds = idHandler.usedIdChecker(nodesIds, nodesMap);
-    linksIds = idHandler.usedIdChecker(linksIds, linksMap);
 
-    // Disegna nodi, link e labels
-    drawLinkElements();
-    drawLinkLabels();
-    drawNodesElements();
-    drawNodesLabels();
-    simulationForce();
-  })
-    .catch(function (error) {
-      // Funzione di callback per gestire eventuali errori durante il caricamento del file JSON
-      console.log(error);
-    });
+      d3.json(selectedFileName).then(function (data) {
+        // Funzione di callback che viene chiamata quando il file JSON è stato caricato correttamente
+        svg.on("contextmenu", function (event) {
+          // Previeni il comportamento predefinito del browser
+          event.preventDefault();
+          closeOpenedPopups();
+          createNodePopup(event, nodes, nodesIds, nodesMap);
+        });
+        svg.on("click", function (event) { closeOpenedPopups(); });
+
+        // Definisci i dati del grafo e crea una mappa per associare gli ID dei nodi ai nodi stessi 
+        nodes = data.nodes;
+        links = data.links;
+
+        // Inizializza gli array con gli ID
+        nodesIds = idHandler.createNodesIds()
+        linksIds = idHandler.createLinksIds()
+
+        // Aggiungi i nodi alla mappa
+        nodes.forEach(function (node) {
+          nodesMap.set(node.id, node);
+        });
+
+        // Aggiungi i link alla mappa
+        links.forEach(function (link) {
+          linksMap.set(link.id, link);
+        });
+
+
+        // Crea gli ID e controlla quali di questi sono già utilizzati dai nodi caricati dal json
+        nodesIds = idHandler.usedIdChecker(nodesIds, nodesMap);
+        linksIds = idHandler.usedIdChecker(linksIds, linksMap);
+
+        // Disegna nodi, link e labels
+        drawLinkElements();
+        drawLinkLabels();
+        drawNodesElements();
+        drawNodesLabels();
+        simulationForce();
+      })
+        .catch(function (error) {
+          // Funzione di callback per gestire eventuali errori durante il caricamento del file JSON
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Errore:", error);
+    }
+  });
 });
 
 /*-------------------------------------------------------------------
@@ -264,3 +276,25 @@ function closeOpenedPopups() {
     existingpopup.remove();
   }
 }
+
+async function chooseFile() {
+  return new Promise((resolve) => {
+    console.log("Scegli un file");
+    // Crea un elemento input di tipo file
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json"; // Accetta solo file con estensione .json
+
+    // Aggiungi un listener per l'evento change
+    input.addEventListener("change", async function () {
+      // Ottieni il file selezionato dall'utente
+      var file = this.files[0];
+      // Risolvi la promessa con il percorso del file
+      resolve(file.name);
+    });
+
+    // Aggiungi l'elemento input al DOM
+    input.click();
+  });
+}
+

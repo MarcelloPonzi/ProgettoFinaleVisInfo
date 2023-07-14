@@ -1,5 +1,6 @@
 import * as idHandler from './idHandler.js'
 import { DEFAULT_COLOR } from './globalVariables.js'
+import { createInfoSection } from "./infoSection.js";
 import * as app from './app.js'
 import { simulation } from './app.js'
 
@@ -80,19 +81,9 @@ function setUpNode(x, y) {
 function setUpLink(nodeSource, nodesMap) {
     return new Promise(function (resolve, reject) {
         var nodeTarget;
-        console.log("Creo un nuovo link");
-
         var circles = d3.selectAll("circle");
 
-        var originalClickListener = function (event, d) {
-            var circleId = d.id;
-
-            resolve(circleId);
-        };
-
         var clickListener = function (event, d) {
-            originalClickListener(event, d);
-
             // Rimuovi il listener di click aggiunto da esecuzioneAsincrona()
             circles.on("click", null);
 
@@ -108,26 +99,13 @@ function setUpLink(nodeSource, nodesMap) {
                 source: nodeSource,
                 target: nodeTarget
             };
-
+            circles.on("click", null);
+            circles.on("click", function (event, d) { createInfoSection(nodesMap, d.id) })
             // Risolvi la promessa con il link creato
             resolve(link);
         };
-
+        // Aggiungi il listener di click ai circle
         circles.on("click", clickListener);
-    });
-}
-
-function esecuzioneAsincrona() {
-    console.log("Inizio esecuzione");
-
-    return new Promise(function (resolve, reject) {
-        var circles = d3.selectAll("circle");
-
-        circles.on("click", function (event, d) {
-            var circleId = d.id;
-
-            resolve(circleId);
-        });
     });
 }
 
