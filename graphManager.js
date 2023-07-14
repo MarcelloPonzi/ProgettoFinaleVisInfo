@@ -82,12 +82,11 @@ function setUpLink(nodeSource, nodesMap) {
     return new Promise(function (resolve, reject) {
         var nodeTarget;
         var circles = d3.selectAll("circle");
-
         var clickListener = function (event, d) {
             // Rimuovi il listener di click aggiunto da esecuzioneAsincrona()
             circles.on("click", null);
 
-            // Aggiorna il nodo di destinazione con l'id del circle cliccato
+            // Aggiorna il nodo di destinazione con l'id del node cliccato
             nodeTarget = nodesMap.get(d.id);
 
             // Creazione del link con il nodo di origine e di destinazione

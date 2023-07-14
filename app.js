@@ -11,65 +11,87 @@ var linksMap = new Map();
 var nodesIds;
 var linksIds;
 
+
 window.addEventListener('DOMContentLoaded', async function () {
   var openFileButton = document.getElementById("openFileButton");
+  var saveFileButton = document.getElementById("saveFileButton");
+  var newGraphButton = document.getElementById("newGraphButton");
+
+  newGraphButton.addEventListener("click", function () {
+    initializeGraph()
+    openFileButton.remove()
+    newGraphButton.remove()
+  })
+  saveFileButton.addEventListener("click", function () { saveJSONToFile() })
   openFileButton.addEventListener("click", async function () {
     try {
       // Chiamata a chooseFile() e attesa della risoluzione della promessa
-      var selectedFileName = await chooseFile();
-      console.log("File selezionato:", selectedFileName);
-
-
-
-      d3.json(selectedFileName).then(function (data) {
-        // Funzione di callback che viene chiamata quando il file JSON è stato caricato correttamente
-        svg.on("contextmenu", function (event) {
-          // Previeni il comportamento predefinito del browser
-          event.preventDefault();
-          closeOpenedPopups();
-          createNodePopup(event, nodes, nodesIds, nodesMap);
-        });
-        svg.on("click", function (event) { closeOpenedPopups(); });
-
-        // Definisci i dati del grafo e crea una mappa per associare gli ID dei nodi ai nodi stessi 
-        nodes = data.nodes;
-        links = data.links;
-
-        // Inizializza gli array con gli ID
-        nodesIds = idHandler.createNodesIds()
-        linksIds = idHandler.createLinksIds()
-
-        // Aggiungi i nodi alla mappa
-        nodes.forEach(function (node) {
-          nodesMap.set(node.id, node);
-        });
-
-        // Aggiungi i link alla mappa
-        links.forEach(function (link) {
-          linksMap.set(link.id, link);
-        });
-
-
-        // Crea gli ID e controlla quali di questi sono già utilizzati dai nodi caricati dal json
-        nodesIds = idHandler.usedIdChecker(nodesIds, nodesMap);
-        linksIds = idHandler.usedIdChecker(linksIds, linksMap);
-
-        // Disegna nodi, link e labels
-        drawLinkElements();
-        drawLinkLabels();
-        drawNodesElements();
-        drawNodesLabels();
-        simulationForce();
-      })
-        .catch(function (error) {
-          // Funzione di callback per gestire eventuali errori durante il caricamento del file JSON
-          console.log(error);
-        });
+      var fileContent = await chooseFile();
+      console.log("File selezionato:\n", fileContent);
+      // Converto il contenuto in un nuovo fileJson per ovviare alla richiesta HTTP
+      var jsonData = JSON.parse(fileContent);
+      initializeGraph(jsonData)
+      openFileButton.remove()
+      newGraphButton.remove()
     } catch (error) {
-      console.error("Errore:", error);
+      console.error("Errore durante il caricamento del file:", error);
     }
   });
 });
+
+/*-------------------------------------------------------------------
+ 
+                       FUNZIONI DI INIZIALIZZAZIONE    
+ 
+-------------------------------------------------------------------*/
+
+function initializeGraph(jsonData) {
+  svg.on("contextmenu", function (event) {
+    // Previeni il comportamento predefinito del browser
+    event.preventDefault();
+    closeOpenedPopups();
+    createNodePopup(event);
+  });
+  svg.on("click", function (event) { closeOpenedPopups(); });
+
+  // Inizializza gli array con gli ID
+  nodesIds = idHandler.createNodesIds();
+  linksIds = idHandler.createLinksIds();
+
+  // Definisci i dati del grafo e crea una mappa per associare gli ID dei nodi ai nodi stessi
+  if (!jsonData) {
+    console.log("JsonData vuoto, creo un nuovo grafo")
+    nodes = []
+    links = []
+    simulationForce();
+  } else {
+    nodes = jsonData.nodes;
+    links = jsonData.links;
+    // Controlla che i dati siano letti correttamente
+    console.log("Array di nodi letti nel file:\n", nodes);
+    console.log("Array di link letti nel file:\n", links);
+    // Aggiungi i nodi alla mappa
+    nodes.forEach(function (node) {
+      nodesMap.set(node.id, node);
+    });
+
+    // Aggiungi i link alla mappa
+    links.forEach(function (link) {
+      linksMap.set(link.id, link);
+    });
+
+    // Crea gli ID e controlla quali di questi sono già utilizzati dai nodi caricati dal json
+    nodesIds = idHandler.usedIdChecker(nodesIds, nodesMap);
+    linksIds = idHandler.usedIdChecker(linksIds, linksMap);
+
+    // Disegna nodi, link e labels
+    drawLinkElements();
+    drawLinkLabels();
+    drawNodesElements();
+    drawNodesLabels();
+    simulationForce();
+  }
+}
 
 /*-------------------------------------------------------------------
  
@@ -81,7 +103,7 @@ function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(parentWidth / 10))
-    .force("charge", d3.forceManyBody())
+    .force("charge", d3.forceManyBody().strength(-50))
     .force("center", d3.forceCenter(parentWidth / 2, parentHeight / 2))
     .on("tick", function () { ticked() });
 }
@@ -126,12 +148,18 @@ function ticked() {
 
 
 export function drawNodesElements() {
-  svg.selectAll("circle")
+  var dragHandler = d3.drag()
+    .on("start", dragStart)
+    .on("drag", dragging)
+    .on("end", dragEnd);
+
+  svg.selectAll(".node")
     .data(nodes)
     .enter()
-    .insert("circle", "line")
+    .insert("circle")
+    .attr("class", "node")
     .attr("r", parentWidth / 100)
-    .attr("fill", "red")
+    .call(dragHandler)
     .on("mouseover", function (event, d) { showInfoPopup(d.id) })
     .on("mouseout", removeInfoPopup)
     .on("click", function (event, d) { createInfoSection(nodesMap, d.id) })
@@ -139,7 +167,8 @@ export function drawNodesElements() {
       event.preventDefault()
       event.stopPropagation();
       createLinkPopup(event, d.id);
-    });
+    })
+    .raise();
 }
 
 export function drawNodesLabels() {
@@ -151,7 +180,8 @@ export function drawNodesLabels() {
     .attr("class", "node-label")
     .attr("text-anchor", "middle")
     .attr("font-size", "12px")
-    .attr("fill", "black");
+    .attr("fill", "black")
+    .raise();
 }
 
 export function drawLinkElements() {
@@ -159,7 +189,8 @@ export function drawLinkElements() {
     .data(links)
     .enter()
     .insert("line")
-    .attr("stroke", function (d) { return d.color; });
+    .attr("stroke", function (d) { return d.color; })
+    .lower();
 }
 
 export function drawLinkLabels() {
@@ -171,7 +202,8 @@ export function drawLinkLabels() {
     .attr("class", "link-label")
     .attr("text-anchor", "middle")
     .attr("font-size", "12px")
-    .attr("fill", "black");
+    .attr("fill", "black")
+    .raise();
 }
 
 // Funzione di callback per mostrare la finestra pop-up
@@ -277,6 +309,38 @@ function closeOpenedPopups() {
   }
 }
 
+
+// Funzione di gestione dell'evento drag "start"
+function dragStart(event, d) {
+  // Logica da eseguire all'inizio del trascinamento
+  console.log("Inizio del trascinamento");
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+// Funzione di gestione dell'evento drag "drag"
+function dragging(event, d) {
+  d.fx = event.x;
+  d.fy = event.y;
+}
+
+// Funzione di gestione dell'evento drag "end"
+function dragEnd(event, d) {
+  // Logica da eseguire alla fine del trascinamento
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+  console.log("Fine del trascinamento");
+}
+
+/*-------------------------------------------------------------------
+ 
+                       FUNZIONI GESTIONE FILES    
+ 
+-------------------------------------------------------------------*/
+
+
 async function chooseFile() {
   return new Promise((resolve) => {
     console.log("Scegli un file");
@@ -289,12 +353,81 @@ async function chooseFile() {
     input.addEventListener("change", async function () {
       // Ottieni il file selezionato dall'utente
       var file = this.files[0];
-      // Risolvi la promessa con il percorso del file
-      resolve(file.name);
+
+      // Leggi il contenuto del file utilizzando un FileReader
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        // Risolvi la promessa con il contenuto del file
+        resolve(event.target.result);
+      };
+      reader.readAsText(file);
     });
 
-    // Aggiungi l'elemento input al DOM
+    // Aggiungi l'elemento input al DOM e apri la finestra di selezione del file
     input.click();
   });
 }
+
+function saveJSONToFile() {
+  // Crea un oggetto per il file JSON
+  console.log("Provo a salvare")
+  var data = {
+    nodes: [],
+    links: []
+  };
+
+  // Aggiungi i nodi al file JSON
+  nodesMap.forEach(function (node) {
+    var nodeData = {
+      id: node.id,
+      nome: node.nome,
+      giocatore: node.giocatore,
+      ruolo: node.ruolo,
+      tipo: node.tipo,
+      background: node.background,
+      info: node.info,
+      tratti: node.tratti,
+      età: node.età,
+      movente: node.movente
+    };
+
+    data.nodes.push(nodeData);
+  });
+
+  // Aggiungi i link al file JSON
+  linksMap.forEach(function (link) {
+    var linkData = {
+      id: link.id,
+      source: link.source.id,
+      target: link.target.id,
+      color: link.color,
+      label: link.label,
+      type: link.type
+    };
+
+    data.links.push(linkData);
+  });
+
+  // Converti l'oggetto in una stringa JSON
+  var jsonString = JSON.stringify(data, null, 2);
+
+  // Crea un oggetto Blob dal JSON
+  var blob = new Blob([jsonString], { type: "application/json" });
+
+  // Crea una finestra di dialogo del filesystem per scegliere il nome del file e la posizione di salvataggio
+  var link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "data.json";
+  // Aggiungi il link al documento HTML
+  document.body.appendChild(link);
+
+  // Simula il click sul link per avviare il download
+  link.click();
+
+  // Rimuovi il link dal documento HTML
+  document.body.removeChild(link);
+}
+
+
+
 

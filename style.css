@@ -57,6 +57,13 @@ html, body {
   resize: vertical; /* Consenti all'utente di ridimensionare il campo di input verticalmente */
 }
 
+.node {
+  fill: red;
+  stroke: black;
+  stroke-width: 1px;
+}
+
+
 .info-label {
   /* Aggiungi qui le regole CSS per personalizzare lo stile dei campi di testo */
 }
