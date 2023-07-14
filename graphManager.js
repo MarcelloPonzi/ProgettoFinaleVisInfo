@@ -2,13 +2,13 @@ import * as idHandler from './idHandler.js'
 import { DEFAULT_COLOR } from './globalVariables.js'
 import { createInfoSection } from "./infoSection.js";
 import * as app from './app.js'
-import { simulation } from './app.js'
+import { nodes, nodesMap, links, linksMap } from './app.js'
 
-export function createNode(nodes, nodesIds, nodesMap, x, y) {
+export function createNode(x, y) {
     // Crea nodo
     var node = setUpNode(x, y);
     // Assegna Id
-    idHandler.assignNodeId(node, nodesIds)
+    idHandler.assignNodeId(node)
     // Aggiungi il nuovo nodo all'array di nodi
     nodes.push(node);
     // Aggiungi il nuovo nodo alla mappa
@@ -27,16 +27,39 @@ export function createNode(nodes, nodesIds, nodesMap, x, y) {
     updateGraph();
 }
 
-export function deleteNode() {
+export function deleteNode(id) {
+    // Rimuovi il nodo dall'array nodes
+    var nodeIndex = nodes.findIndex(function (node) {
+        return node.id === id;
+    });
+    if (nodeIndex !== -1) {
+        nodes.splice(nodeIndex, 1);
+    }
 
+    // Rimuovi il nodo dalla mappa nodesMap
+    nodesMap.delete(id);
+
+    // Cerca i link collegati al nodo eliminato
+    var linksToDelete = [];
+    links.forEach(function (link) {
+        if (link.source.id === id || link.target.id === id) {
+            linksToDelete.push(link);
+        }
+    });
+
+    // Elimina i link dall'array links e dalla mappa linksMap
+    linksToDelete.forEach(function (link) {
+        deleteLink(link.id);
+    });
+    updateGraph();
 }
 
-export function createLink(nodeSource, nodesMap, links, linksIds, linksMap) {
-    setUpLink(nodeSource, nodesMap)
+export function createLink(nodeSource) {
+    setUpLink(nodeSource)
         .then(function (link) {
             // Usa il link creato
             console.log(link);
-            idHandler.assignLinkId(link, linksIds)
+            idHandler.assignLinkId(link)
             linksMap.set(link.id, link)
             links.push(link)
             console.log("Nuovo link:")
@@ -51,8 +74,18 @@ export function createLink(nodeSource, nodesMap, links, linksIds, linksMap) {
         });
 }
 
-export function deleteLink() {
+export function deleteLink(id) {
+    // Rimuovi il link dall'array links
+    var linkIndex = links.findIndex(function (l) {
+        return l.id === id;
+    });
+    if (linkIndex !== -1) {
+        links.splice(linkIndex, 1);
+    }
 
+    // Rimuovi il link dalla mappa linksMap
+    linksMap.delete(id);
+    updateGraph();
 }
 
 export function saveJson() {
@@ -61,24 +94,25 @@ export function saveJson() {
 
 function setUpNode(x, y) {
     console.log("Creo un nodo")
-    var node = {}
-    node.nome = "New character"
-    node.vx = 1
-    node.vy = 1
-    node.x = x
-    node.y = y
-    node.tipo = "To edit"
-    node.giocatore = "To edit"
-    node.ruolo = "To edit"
-    node.info = "To edit"
-    node.tratti = "To edit"
-    node.età = "To edit"
-    node.movente = "To edit"
-    node.background = "To edit"
+
+    var node = {
+        id: null,
+        nome: "New character",
+        giocatore: "To edit",
+        ruolo: "To edit",
+        tipo: "To edit",
+        background: "To edit",
+        info: "To edit",
+        tratti: "To edit",
+        età: "To edit",
+        movente: "To edit",
+        x: x,
+        y: y
+    }
     return node;
 }
 
-function setUpLink(nodeSource, nodesMap) {
+function setUpLink(nodeSource) {
     return new Promise(function (resolve, reject) {
         var nodeTarget;
         var circles = d3.selectAll("circle");
@@ -92,14 +126,15 @@ function setUpLink(nodeSource, nodesMap) {
             // Creazione del link con il nodo di origine e di destinazione
             var link = {
                 id: null,
+                source: nodeSource,
+                target: nodeTarget,
                 color: DEFAULT_COLOR,
                 label: "To edit",
-                type: 0,
-                source: nodeSource,
-                target: nodeTarget
+                info: "To edit",
+                type: 0
             };
             circles.on("click", null);
-            circles.on("click", function (event, d) { createInfoSection(nodesMap, d.id) })
+            circles.on("click", function (event, d) { createInfoSection(d.id) })
             // Risolvi la promessa con il link creato
             resolve(link);
         };

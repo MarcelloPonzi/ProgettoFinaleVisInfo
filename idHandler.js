@@ -1,3 +1,4 @@
+import { nodesIds, linksIds } from './app.js'
 const MAX_LINKS = 300; // rimetti a 300
 const MAX_NODES = 30; // rimetti a 30
 
@@ -8,7 +9,7 @@ export function usedIdChecker(idsArray, map) {
     });
 }
 
-// Gestione ID per i nodi
+/* Gestione ID per i nodi */
 export function createNodesIds() {
     let arr = [];
     for (let i = 1; i <= MAX_NODES; i++) {
@@ -17,7 +18,7 @@ export function createNodesIds() {
     return arr;
 }
 
-export function assignNodeId(node, nodesIds) {
+export function assignNodeId(node) {
     if (nodesIds.length === 0) {
         throw new Error("No more IDs available for nodes");
     }
@@ -30,8 +31,7 @@ export function releaseNodeId(node) {
 }
 
 
-// Gestione ID per i link
-
+/* Gestione ID per i link */
 export function createLinksIds() {
     let arr = [];
     for (let i = 1; i <= MAX_LINKS; i++) {
@@ -41,7 +41,7 @@ export function createLinksIds() {
 }
 
 
-export function assignLinkId(link, linksIds) {
+export function assignLinkId(link) {
     if (linksIds.length === 0) {
         throw new Error("No more IDs available for links");
     }

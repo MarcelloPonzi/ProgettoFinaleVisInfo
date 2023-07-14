@@ -1,15 +1,14 @@
 import { parentElement, parentWidth, parentHeight, svg } from './globalVariables.js'
-import { createInfoSection } from "./infoSection.js";
-import * as idHandler from './idHandler.js';
+import { createInfoSection, createLinkInfoSection } from "./infoSection.js"
+import * as idHandler from './idHandler.js'
 import * as graphManager from './graphManager.js'
 export var simulation;
-
-var links;
-var nodes;
-var nodesMap = new Map();
-var linksMap = new Map();
-var nodesIds;
-var linksIds;
+export var links;
+export var nodes;
+export var nodesMap = new Map();
+export var linksMap = new Map();
+export var nodesIds;
+export var linksIds;
 
 
 window.addEventListener('DOMContentLoaded', async function () {
@@ -95,14 +94,14 @@ function initializeGraph(jsonData) {
 
 /*-------------------------------------------------------------------
  
-                       FUNZIONI DI SUPPORTO    
+                       FUNZIONI DI SIMULAZIONE   
  
 -------------------------------------------------------------------*/
 
 function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(parentWidth / 10))
+    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(parentWidth / 12))
     .force("charge", d3.forceManyBody().strength(-50))
     .force("center", d3.forceCenter(parentWidth / 2, parentHeight / 2))
     .on("tick", function () { ticked() });
@@ -146,6 +145,11 @@ function ticked() {
     .attr("y", function (d) { return d.y - (parentWidth / 100 + 5); });
 }
 
+/*-------------------------------------------------------------------
+ 
+                       FUNZIONI DI SUPPORTO    
+ 
+-------------------------------------------------------------------*/
 
 export function drawNodesElements() {
   var dragHandler = d3.drag()
@@ -162,7 +166,7 @@ export function drawNodesElements() {
     .call(dragHandler)
     .on("mouseover", function (event, d) { showInfoPopup(d.id) })
     .on("mouseout", removeInfoPopup)
-    .on("click", function (event, d) { createInfoSection(nodesMap, d.id) })
+    .on("click", function (event, d) { createInfoSection(d.id) })
     .on("contextmenu", function (event, d) {
       event.preventDefault()
       event.stopPropagation();
@@ -185,11 +189,14 @@ export function drawNodesLabels() {
 }
 
 export function drawLinkElements() {
-  svg.selectAll("line")
+  svg.selectAll(".link")
     .data(links)
     .enter()
     .insert("line")
+    .attr("class", "link")
     .attr("stroke", function (d) { return d.color; })
+    .attr("stroke-width", 3)
+    .on("click", function (event, d) { createLinkInfoSection(d.id) })
     .lower();
 }
 
@@ -200,6 +207,7 @@ export function drawLinkLabels() {
     .append("text")
     .text(function (d) { return d.label; })
     .attr("class", "link-label")
+    .attr("id", function (d) { return d.id; })
     .attr("text-anchor", "middle")
     .attr("font-size", "12px")
     .attr("fill", "black")
