@@ -25,9 +25,10 @@ export function assignNodeId(node) {
     node.id = nodesIds.shift();
 }
 
-export function releaseNodeId(node) {
-    nodesIds.push(node.id);
-    delete node.id;
+export function releaseNodeId(id) {
+    nodesIds.push(id);
+    console.log("Rilasciato id", id)
+    console.log(nodesIds);
 }
 
 
@@ -48,9 +49,10 @@ export function assignLinkId(link) {
     link.id = linksIds.shift();
 }
 
-export function releaseLinkId(link) {
-    linksIds.push(link.id);
-    delete link.id;
+export function releaseLinkId(id) {
+    linksIds.push(id);
+    console.log("Rilasciato id", id)
+    console.log(linksIds);
 }
 
 

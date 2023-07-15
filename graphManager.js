@@ -1,5 +1,5 @@
 import * as idHandler from './idHandler.js'
-import { svg, DEFAULT_COLOR } from './globalVariables.js'
+import { svg, DEFAULT_LINK_COLOR, DEFAULT_NODE_COLOR } from './globalVariables.js'
 import { createInfoSection } from "./infoSection.js";
 import * as app from './app.js'
 import { nodes, nodesMap, links, linksMap } from './app.js'
@@ -36,7 +36,7 @@ export function deleteNode(id) {
     if (nodeIndex !== -1) {
         nodes.splice(nodeIndex, 1);
     }
-
+    idHandler.releaseNodeId(id)
     // Rimuovi il nodo dalla mappa nodesMap
     nodesMap.delete(id);
 
@@ -56,8 +56,15 @@ export function deleteNode(id) {
 }
 
 export function createLink(nodeSource) {
+
+    var messageDiv = d3.select("#svg-container")
+        .insert("div", ":first-child")
+        .attr("class", "select-target-node-message")
+        .text("Clicca un altro nodo con cui creare la relazione");
+
     setUpLink(nodeSource)
         .then(function (link) {
+            messageDiv.remove();
             // Usa il link creato
             console.log(link);
             idHandler.assignLinkId(link)
@@ -72,7 +79,10 @@ export function createLink(nodeSource) {
         .catch(function (error) {
             // Gestisci l'errore
             console.error(error);
+            messageDiv.remove();
         });
+
+
 }
 
 export function deleteLink(id) {
@@ -84,7 +94,7 @@ export function deleteLink(id) {
     if (linkIndex !== -1) {
         links.splice(linkIndex, 1);
     }
-
+    idHandler.releaseLinkId(id)
     // Rimuovi il link dalla mappa linksMap
     linksMap.delete(id);
     updateGraph();
@@ -104,6 +114,7 @@ function setUpNode(x, y) {
         tratti: "To edit",
         età: "To edit",
         movente: "To edit",
+        color: DEFAULT_NODE_COLOR,
         x: x,
         y: y
     }
@@ -126,7 +137,7 @@ function setUpLink(nodeSource) {
                 id: null,
                 source: nodeSource,
                 target: nodeTarget,
-                color: DEFAULT_COLOR,
+                color: DEFAULT_LINK_COLOR,
                 label: "To edit",
                 info: "To edit",
                 type: 0
@@ -161,7 +172,8 @@ export function saveJSONToFile() {
             info: node.info,
             tratti: node.tratti,
             età: node.età,
-            movente: node.movente
+            movente: node.movente,
+            color: node.color
         };
 
         data.nodes.push(nodeData);
@@ -175,6 +187,7 @@ export function saveJSONToFile() {
             target: link.target.id,
             color: link.color,
             label: link.label,
+            info: link.info,
             type: link.type
         };
 
@@ -190,7 +203,7 @@ export function saveJSONToFile() {
     // Crea una finestra di dialogo del filesystem per scegliere il nome del file e la posizione di salvataggio
     var link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "data.json";
+    link.download = "yourGraph.json";
     // Aggiungi il link al documento HTML
     document.body.appendChild(link);
 
@@ -221,6 +234,6 @@ export function deleteLinkDraw(id) {
         .remove();
 }
 
-function updateGraph() {
+export function updateGraph() {
     app.restartSimulation();
 }

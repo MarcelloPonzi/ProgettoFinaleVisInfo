@@ -19,7 +19,6 @@ html, body {
     font-size: 14px;
   }
 
-  /* Stile per la sezione delle informazioni */
   .info-section {
     position: fixed;
     right: 0;
@@ -28,7 +27,7 @@ html, body {
     height: 100%;
     background-color: #f1f1f1;
     padding: 20px;
-    overflow-y: auto; /* Aggiungi la barra di scorrimento verticale se il contenuto supera l'altezza della sezione */
+    overflow-y: auto; 
   }
 
 
@@ -48,24 +47,21 @@ html, body {
   margin-bottom: 10px;
 }
 
-/* Stile per i campi di input di tipo "textarea" */
 .info-section textarea {
   display: block;
   width: 90%;
-  height: 100px; /* Imposta l'altezza del campo di input */
+  height: 100px; 
   margin-bottom: 10px;
-  resize: vertical; /* Consenti all'utente di ridimensionare il campo di input verticalmente */
+  resize: vertical; 
 }
 
 .node {
-  fill: red;
   stroke: black;
-  stroke-width: 1px;
+  stroke-width: 2px;
 }
 
 
 .info-label {
-  /* Aggiungi qui le regole CSS per personalizzare lo stile dei campi di testo */
 }
 
 .popup-text {
@@ -82,4 +78,71 @@ html, body {
   background-color: white;
   border: 1px solid black;
   padding: 10px;
+}
+
+.select-target-node-message {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 30px;
+  text-align: center;
+}
+
+/* Style switch */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input[type="checkbox"]:checked + .slider {
+  background-color: #2196F3;
+}
+
+input[type="checkbox"]:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 20px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
