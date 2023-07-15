@@ -199,7 +199,14 @@ export function drawLinkElements() {
     .attr("stroke", function (d) { return d.color; })
     .attr("stroke-width", 3)
     .on("click", function (event, d) { createLinkInfoSection(d.id) })
-    .lower();
+    .lower()
+    .on("mouseover", (event, d) => {
+      console.log("mouseoverlink")
+      d3.select(event.currentTarget)
+        .transition()
+        .duration(200)
+        .style("stroke-width", 20)
+    });
 }
 
 export function drawLinkLabels() {

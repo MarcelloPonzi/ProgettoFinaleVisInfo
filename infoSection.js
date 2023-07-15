@@ -101,6 +101,18 @@ export function createInfoSection(id) {
         });
 
     infoSection.append("label")
+        .text("Età:");
+    infoSection.append("input")
+        .attr("type", "number")
+        .style("width", infoSection.width / 3)
+        .attr("value", node.età)
+        .on("change", function () {
+            node.età = d3.select(this).property("value")
+            console.log(nodesMap)
+            console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.età + "\"")
+        });
+    infoSection.append("br")
+    infoSection.append("label")
         .text("Movente:");
     infoSection.append("textarea")
         .text(node.movente)
