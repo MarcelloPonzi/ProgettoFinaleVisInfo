@@ -91,6 +91,11 @@ html, body {
   stroke-width: 2px;
 }
 
+.link {
+  stroke-width: 5px;
+}
+
+
 
 .info-label {
 }

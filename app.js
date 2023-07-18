@@ -165,8 +165,14 @@ export function drawNodesElements() {
     .attr("r", parentWidth / 100)
     .attr("fill", function (d) { return d.color; })
     .call(dragHandler)
-    .on("mouseover", function (event, d) { showInfoPopup(d.id) })
-    .on("mouseout", removeInfoPopup)
+    .on("mouseover", function (event, d) {
+      showInfoPopup(d.id)
+      changeNode(event)
+    })
+    .on("mouseout", function (event, d) {
+      removeInfoPopup()
+      resetNode(event)
+    })
     .on("click", function (event, d) { createInfoSection(d.id) })
     .on("contextmenu", function (event, d) {
       event.preventDefault()
@@ -197,16 +203,10 @@ export function drawLinkElements() {
     .insert("line")
     .attr("class", "link")
     .attr("stroke", function (d) { return d.color; })
-    .attr("stroke-width", 3)
     .on("click", function (event, d) { createLinkInfoSection(d.id) })
     .lower()
-    .on("mouseover", (event, d) => {
-      console.log("mouseoverlink")
-      d3.select(event.currentTarget)
-        .transition()
-        .duration(200)
-        .style("stroke-width", 20)
-    });
+    .on("mouseover", function (event, d) { enlargeLink(event) })
+    .on("mouseout", function (event, d) { resetLink(event) })
 }
 
 export function drawLinkLabels() {
@@ -349,6 +349,44 @@ function dragEnd(event, d) {
   d.fx = null;
   d.fy = null;
   console.log("Fine del trascinamento");
+}
+
+// Funzione per ingrandire la linea
+function enlargeLink(event) {
+  console.log("Illumino link")
+  var link = d3.select(event.currentTarget)
+  link.transition()
+    .duration(100)
+    .style("stroke-width", "10px")
+    .style("stroke", "white");
+}
+
+// Funzione per ripristinare le dimensioni originali della linea
+function resetLink(event) {
+  var link = d3.select(event.currentTarget)
+  link.transition()
+    .duration(100)
+    .style("stroke-width", "5px")
+    .style("stroke", function (d) { return d.color; });
+}
+
+// Funzione per cambiare colore al bordo del nodo
+function changeNode(event) {
+  console.log("Illumino nodo")
+  var link = d3.select(event.currentTarget)
+  link.transition()
+    .duration(100)
+    .style("stroke-width", "5px")
+    .style("stroke", "white");
+}
+
+// Funzione per cambiare colore al bordo del nodo
+function resetNode(event) {
+  var node = d3.select(event.currentTarget)
+  node.transition()
+    .duration(100)
+    .style("stroke-width", "2px")
+    .style("stroke", "black");
 }
 
 /*-------------------------------------------------------------------
