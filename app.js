@@ -122,28 +122,39 @@ export function restartSimulation() {
 
 // Funzione di callback chiamata ad ogni aggiornamento delle posizioni dei nodi e dei link
 function ticked() {
+  // Aggiorna le posizioni dei link
   svg.selectAll("line")
-    .data(links)
-    .attr("x1", function (d) { return d.source.x; })
-    .attr("y1", function (d) { return d.source.y; })
-    .attr("x2", function (d) { return d.target.x; })
-    .attr("y2", function (d) { return d.target.y; });
+    .attr("x1", (d) => d.source.x)
+    .attr("y1", (d) => d.source.y)
+    .attr("x2", (d) => d.target.x)
+    .attr("y2", (d) => d.target.y);
 
+  // Aggiorna le posizioni dei cerchi
   svg.selectAll("circle")
-    .data(nodes)
-    .attr("cx", function (d) { return d.x; })
-    .attr("cy", function (d) { return d.y; });
+    .attr("cx", (d) => d.x)
+    .attr("cy", (d) => d.y);
 
+  // Aggiorna le posizioni dei rettangoli in base al centro
+  svg.selectAll("rect")
+    .attr("x", function (d) {
+      return d.x - (this.getAttribute("width") / 2);
+    })
+    .attr("y", function (d) {
+      return d.y - (this.getAttribute("height") / 2);
+    });
+
+
+  // Aggiorna le posizioni delle etichette dei link
   svg.selectAll(".link-label")
-    .data(links)
-    .attr("x", function (d) { return (d.source.x + d.target.x) / 2; })
-    .attr("y", function (d) { return (d.source.y + d.target.y) / 2; });
+    .attr("x", (d) => (d.source.x + d.target.x) / 2)
+    .attr("y", (d) => (d.source.y + d.target.y) / 2);
 
+  // Aggiorna le posizioni delle etichette dei nodi
   svg.selectAll(".node-label")
-    .data(nodes)
-    .attr("x", function (d) { return d.x; })
-    .attr("y", function (d) { return d.y - (parentWidth / 100 + 5); });
+    .attr("x", (d) => d.x)
+    .attr("y", (d) => d.y - (parentWidth / 100 + 5));
 }
+
 
 /*-------------------------------------------------------------------
  
@@ -157,12 +168,22 @@ export function drawNodesElements() {
     .on("drag", dragging)
     .on("end", dragEnd);
 
-  svg.selectAll(".node")
+  // Selezione degli elementi .node esistenti o appena creati
+  var nodesSelection = svg.selectAll(".node")
     .data(nodes)
     .enter()
-    .insert("circle")
+    .append(function (d) {
+      switch (d.tipo) {
+        case 'oggetto':
+          return document.createElementNS("http://www.w3.org/2000/svg", "rect")
+        case 'personaggio':
+          return document.createElementNS("http://www.w3.org/2000/svg", "circle")
+        default:
+          console.error("Tipo non valido: " + d.tipo);
+          return null;
+      }
+    })
     .attr("class", "node")
-    .attr("r", parentWidth / 100)
     .attr("fill", function (d) { return d.color; })
     .call(dragHandler)
     .on("mouseover", function (event, d) {
@@ -180,7 +201,20 @@ export function drawNodesElements() {
       createLinkPopup(event, d.id);
     })
     .raise();
+
+  // Impostazione degli attributi specifici per i rettangoli e i cerchi
+  nodesSelection.filter(function (d) {
+    return d.tipo === 'oggetto';
+  })
+    .attr("width", parentWidth / 75)
+    .attr("height", parentWidth / 75);
+
+  nodesSelection.filter(function (d) {
+    return d.tipo === 'personaggio';
+  })
+    .attr("r", parentWidth / 100);
 }
+
 
 export function drawNodesLabels() {
   svg.selectAll(".node-label")
@@ -268,12 +302,21 @@ function createNodePopup(event) {
 
   // Aggiungi del testo al popup
   popup.append("button")
-    .text("Crea nodo qui")
+    .text("Crea nodo Personaggio qui")
     .on("click", function () {
       var x = event.clientX;
       var y = event.clientY;
       popup.remove()
-      graphManager.createNode(nodes, nodesIds, nodesMap, x, y);
+      graphManager.createNode(x, y, "personaggio");
+    });
+
+  popup.append("button")
+    .text("Crea nodo Oggetto qui")
+    .on("click", function () {
+      var x = event.clientX;
+      var y = event.clientY;
+      popup.remove()
+      graphManager.createNode(x, y, "oggetto");
     });
 
 

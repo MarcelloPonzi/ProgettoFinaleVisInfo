@@ -8,4 +8,5 @@ export var svg = d3.select("#svg-container")
     .attr("height", parentHeight)
     .attr("class", "graph-svg")
 export const DEFAULT_LINK_COLOR = "yellow"
-export const DEFAULT_NODE_COLOR = "green"
+export const DEFAULT_CHARACTER_COLOR = "green"
+export const DEFAULT_OBJECT_COLOR = "red"

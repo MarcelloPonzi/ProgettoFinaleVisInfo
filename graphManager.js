@@ -1,12 +1,23 @@
 import * as idHandler from './idHandler.js'
-import { svg, DEFAULT_LINK_COLOR, DEFAULT_NODE_COLOR } from './globalVariables.js'
+import { svg, DEFAULT_LINK_COLOR, DEFAULT_CHARACTER_COLOR, DEFAULT_OBJECT_COLOR } from './globalVariables.js'
 import { createInfoSection } from "./infoSection.js";
 import * as app from './app.js'
-import { nodes, nodesMap, links, linksMap } from './app.js'
+import { nodes, nodesMap, nodesIds, links, linksMap } from './app.js'
 
-export function createNode(x, y) {
-    // Crea nodo
-    var node = setUpNode(x, y);
+export function createNode(x, y, tipoNodo) {
+    switch (tipoNodo) {
+        case 'oggetto':
+            node = setUpNodeObject(x, y);
+            break;
+        case 'personaggio':
+            // Crea nodo personaggio
+            var node = setUpNodeCharacter(x, y);
+            break;
+        default:
+            console.error("Tipo non valido: " + tipoNodo);
+            return;
+    }
+
     // Assegna Id
     idHandler.assignNodeId(node)
     // Aggiungi il nuovo nodo all'array di nodi
@@ -16,14 +27,14 @@ export function createNode(x, y) {
     // Aggiorna la visualizzazione del grafo
     app.drawNodesElements();
     app.drawNodesLabels();
-    /* console.log("Nuovo nodo creato: ");
+    console.log("Nuovo nodo creato: ");
     console.log(node);
     console.log("Array nodi: ");
     console.log(nodes);
     console.log("Mappa nodi: ");
     console.log(nodesMap);
     console.log("Array ID: ");
-    console.log(nodesIds); */
+    console.log(nodesIds);
     updateGraph();
 }
 
@@ -100,21 +111,37 @@ export function deleteLink(id) {
     updateGraph();
 }
 
-function setUpNode(x, y) {
-    console.log("Creo un nodo")
+function setUpNodeCharacter(x, y) {
+    console.log("Creo un nodo personaggio")
 
     var node = {
         id: null,
         nome: "New character",
         giocatore: "To edit",
         ruolo: "To edit",
-        tipo: "To edit",
+        tipo: "personaggio",
         background: "To edit",
         info: "To edit",
         tratti: "To edit",
         età: "To edit",
         movente: "To edit",
-        color: DEFAULT_NODE_COLOR,
+        color: DEFAULT_CHARACTER_COLOR,
+        x: x,
+        y: y
+    }
+    return node;
+}
+
+function setUpNodeObject(x, y) {
+    console.log("Creo un nodo oggetto")
+
+    var node = {
+        id: null,
+        nome: "New object",
+        tipo: "oggetto",
+        descrizione: "To edit",
+        scopo: "To edit",
+        color: DEFAULT_OBJECT_COLOR,
         x: x,
         y: y
     }
