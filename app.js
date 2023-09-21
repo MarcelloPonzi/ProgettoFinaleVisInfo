@@ -9,6 +9,10 @@ export var nodesMap = new Map();
 export var linksMap = new Map();
 export var nodesIds;
 export var linksIds;
+var graphSvg = document.getElementById("graph");
+var graphWidth = graphSvg.clientWidth;
+var scaleFactor;
+
 
 
 window.addEventListener('DOMContentLoaded', async function () {
@@ -104,7 +108,6 @@ function initializeGraph(jsonData) {
     simulationForce();
 
     // Aggiunge lo zoom
-    var graphSvg = document.getElementById("graph")
     addZoomListener(graphSvg);
   }
 }
@@ -118,9 +121,9 @@ function initializeGraph(jsonData) {
 function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(parentWidth / 12))
+    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(graphWidth / 10))
     .force("charge", d3.forceManyBody().strength(-50))
-    .force("center", d3.forceCenter(parentWidth / 2, parentHeight / 2))
+    .force("center", d3.forceCenter(graphWidth / 2, parentHeight / 2))
     .on("tick", function () { ticked() });
 }
 
@@ -169,7 +172,7 @@ function ticked() {
   // Aggiorna le posizioni delle etichette dei nodi
   svg.selectAll(".node-label")
     .attr("x", (d) => d.x)
-    .attr("y", (d) => d.y - (parentWidth / 100 + 5));
+    .attr("y", (d) => d.y - (graphWidth / 100 + 5));
 }
 
 
@@ -223,13 +226,13 @@ export function drawNodesElements() {
   nodesSelection.filter(function (d) {
     return d.tipo === 'oggetto';
   })
-    .attr("width", parentWidth / 75)
-    .attr("height", parentWidth / 75);
+    .attr("width", graphWidth / 75)
+    .attr("height", graphWidth / 75);
 
   nodesSelection.filter(function (d) {
     return d.tipo === 'personaggio';
   })
-    .attr("r", parentWidth / 100);
+    .attr("r", graphWidth / 100);
 }
 
 
@@ -291,8 +294,8 @@ function showInfoPopup(id) {
       appendPopupField(popupContent, "Tratti:", nodo.tratti);
       appendPopupField(popupContent, "Movente:", nodo.movente);
       popup.appendChild(popupContent);
-      popup.style.top = (nodo.y + parentElement.offsetTop - parentWidth / 15) + "px";
-      popup.style.left = (nodo.x + parentElement.offsetLeft - parentWidth / 20) + "px";
+      popup.style.top = (nodo.y + parentElement.offsetTop - graphWidth / 10) + "px";
+      popup.style.left = (nodo.x + parentElement.offsetLeft - graphWidth / 20) + "px";
       break;
 
     case "oggetto":
@@ -300,8 +303,8 @@ function showInfoPopup(id) {
       appendPopupField(popupContent, "Nome oggetto:", nodo.nome);
       appendPopupField(popupContent, "Descrizione:", nodo.descrizione);
       popup.appendChild(popupContent);
-      popup.style.top = (nodo.y + parentElement.offsetTop - parentWidth / 30) + "px";
-      popup.style.left = (nodo.x + parentElement.offsetLeft - parentWidth / 30) + "px";
+      popup.style.top = (nodo.y + parentElement.offsetTop - graphWidth / 25) + "px";
+      popup.style.left = (nodo.x + parentElement.offsetLeft - graphWidth / 25) + "px";
       break;
 
     default:
@@ -475,7 +478,7 @@ function resetNode(event) {
 }
 
 function addZoomListener(svgElement) {
-  var scaleFactor = 0.8;
+  scaleFactor = 0.8
   var zoomSpeed = 0.1;
 
   svgElement.addEventListener("wheel", function (event) {
