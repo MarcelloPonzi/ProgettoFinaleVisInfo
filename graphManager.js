@@ -40,7 +40,7 @@ export function createNode(x, y, tipoNodo) {
 
 export function deleteNode(id) {
     deleteNodeDraw(id)
-    // Rimuovi il nodo dall'array nodes
+    // Rimuove il nodo dall'array nodes
     var nodeIndex = nodes.findIndex(function (node) {
         return node.id === id;
     });
@@ -48,7 +48,7 @@ export function deleteNode(id) {
         nodes.splice(nodeIndex, 1);
     }
     idHandler.releaseNodeId(id)
-    // Rimuovi il nodo dalla mappa nodesMap
+    // Rimuove il nodo dalla mappa nodesMap
     nodesMap.delete(id);
 
     // Cerca i link collegati al nodo eliminato
@@ -88,7 +88,7 @@ export function createLink(nodeSource) {
             updateGraph();
         })
         .catch(function (error) {
-            // Gestisci l'errore
+            // Gestisce l'errore
             console.error(error);
             messageDiv.remove();
         });
@@ -98,7 +98,7 @@ export function createLink(nodeSource) {
 
 export function deleteLink(id) {
     deleteLinkDraw(id)
-    // Rimuovi il link dall'array links
+    // Rimuove il link dall'array links
     var linkIndex = links.findIndex(function (l) {
         return l.id === id;
     });
@@ -106,7 +106,7 @@ export function deleteLink(id) {
         links.splice(linkIndex, 1);
     }
     idHandler.releaseLinkId(id)
-    // Rimuovi il link dalla mappa linksMap
+    // Rimuove il link dalla mappa linksMap
     linksMap.delete(id);
     updateGraph();
 }
@@ -154,13 +154,8 @@ function setUpLink(nodeSource) {
         var nodeTarget;
         var selectedNodes = d3.selectAll(".node");
         var clickListener = function (event, d) {
-            // Rimuovi il listener di click aggiunto da esecuzioneAsincrona()
             selectedNodes.on("click", null);
-
-            // Aggiorna il nodo di destinazione con l'id del node cliccato
             nodeTarget = nodesMap.get(d.id);
-
-            // Creazione del link con il nodo di origine e di destinazione
             var link = {
                 id: null,
                 source: nodeSource,
@@ -172,10 +167,10 @@ function setUpLink(nodeSource) {
             };
             selectedNodes.on("click", null);
             selectedNodes.on("click", function (event, d) { createInfoSection(d.id) })
-            // Risolvi la promessa con il link creato
+            // Risolve la promessa con il link creato
             resolve(link);
         };
-        // Aggiungi il listener di click ai circle
+        // Aggiunge il listener di click ai circle
         selectedNodes.on("click", clickListener);
     });
 }
@@ -188,29 +183,61 @@ export function saveJSONToFile() {
         links: []
     };
 
-    // Aggiungi i nodi al file JSON
+    // Aggiunge i nodi al file JSON
     nodesMap.forEach(function (node) {
-        var nodeData = {};
-        for (var key in node) {
-            if (node.hasOwnProperty(key)) {
-                nodeData[key] = node[key];
-            }
+        switch (node.tipo) {
+            case 'oggetto':
+                var nodeData = {
+                    id: node.id,
+                    tipo: node.tipo,
+                    nome: node.nome,
+                    descrizione: node.descrizione,
+                    scopo: node.scopo,
+                    color: node.color,
+                    immagine: node.immagine
+                }
+                data.nodes.push(nodeData);
+                break;
+            case 'personaggio':
+                var nodeData = {
+                    id: node.id,
+                    tipo: node.tipo,
+                    nome: node.nome,
+                    giocatore: node.giocatore,
+                    ruolo: node.ruolo,
+                    background: node.background,
+                    info: node.info,
+                    tratti: node.tratti,
+                    età: node.età,
+                    movente: node.movente,
+                    color: node.color
+                };
+                data.nodes.push(nodeData);
+                break;
+            default:
+                console.error("Tipo non valido: " + tipoNodo + "non posso salvare il file");
+                return;
+
         }
-        data.nodes.push(nodeData);
+
+
     });
 
-    // Aggiungi i link al file JSON
+    // Aggiunge i link al file JSON
     linksMap.forEach(function (link) {
-        var linkData = {};
-        for (var key in link) {
-            if (link.hasOwnProperty(key)) {
-                linkData[key] = link[key];
-            }
-        }
+        var linkData = {
+            id: link.id,
+            source: link.source.id,
+            target: link.target.id,
+            color: link.color,
+            label: link.label,
+            info: link.info,
+            type: link.type
+        };
         data.links.push(linkData);
     });
 
-    // Converti l'oggetto in una stringa JSON
+    // Converte l'oggetto in una stringa JSON
     var jsonString = JSON.stringify(data, null, 2);
 
     // Crea un oggetto Blob dal JSON
@@ -228,6 +255,7 @@ export function saveJSONToFile() {
 
     // Rimuovi il link dal documento HTML
     document.body.removeChild(link);
+    console.log("Salvataggio riuscito.")
 }
 
 // Cancella la grafica del nodo e della relativa label

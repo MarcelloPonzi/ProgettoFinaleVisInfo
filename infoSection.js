@@ -18,7 +18,7 @@ export function createInfoSection(id) {
     var h2 = infoSection.append("h2")
         .text(node.nome);
 
-    // Aggiungi un pulsante per chiudere la sezione delle informazioni
+    // Aggiunge un pulsante per chiudere la sezione delle informazioni
     infoSection.append("button")
         .attr("class", "close-button")
         .text("X")
@@ -28,20 +28,17 @@ export function createInfoSection(id) {
 
     switch (node.tipo) {
         case 'oggetto':
-
-            break;
-        case 'personaggio':
-            // Aggiungi un pulsante per cancellare il nodo
+            // Aggiunge un pulsante per cancellare il nodo
             infoSection.append("button")
                 .attr("class", "delete-button")
-                .text("Cancella personaggio")
+                .text("Cancella oggetto")
                 .on("click", function () {
                     graphManager.deleteNodeDraw(id)
                     graphManager.deleteNode(id)
                     infoSection.remove();
                 });
             infoSection.append("br")
-            // Aggiungi le informazioni del node alla sezione delle informazioni
+            // Aggiunge le informazioni del nodo alla sezione delle informazioni
             infoSection.append("label")
                 .text("Nome:");
 
@@ -55,18 +52,18 @@ export function createInfoSection(id) {
                         .filter(function (d) { return d.id === node.id; })
                         .text(node.nome);
                     console.log(nodesMap)
-                    console.log("Ho cambiato il nome del nodo di id ", node.id, " in ", "\"" + node.nome + "\"")
+                    console.log("Ho cambiato il nome del nodo oggetto di id ", node.id, " in ", "\"" + node.nome + "\"")
                 });
 
             infoSection.append("label")
-                .text("Giocatore:");
+                .text("Descrizione:");
             infoSection.append("input")
                 .attr("type", "text")
-                .attr("value", node.giocatore)
+                .attr("value", node.descrizione)
                 .on("change", function () {
-                    node.giocatore = d3.select(this).property("value")
+                    node.descrizione = d3.select(this).property("value")
                     console.log(nodesMap)
-                    console.log("Ho cambiato il giocatore del nodo di id ", node.id, " in ", "\"" + node.giocatore + "\"")
+                    console.log("Ho cambiato la descrizione del nodo oggetto di id ", node.id, " in ", "\"" + node.descrizione + "\"")
                 });
             infoSection.append("label")
                 .text("Colore:");
@@ -79,7 +76,71 @@ export function createInfoSection(id) {
                     svg.selectAll(".node")
                         .filter(function (d) { return d.id === id; })
                         .attr("fill", node.color);
-                    console.log("Ho cambiato il colore del nodo di id ", node.id, " in ", node.color)
+                    console.log("Ho cambiato il colore del nodo oggetto di id ", node.id, " in ", node.color)
+                });
+
+            infoSection.append("br")
+            infoSection.append("label")
+                .text("Scopo:");
+            infoSection.append("textarea")
+                .text(node.scopo)
+                .on("change", function () {
+                    node.scopo = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato lo scopo del nodo oggetto di id ", node.id, " in ", "\"" + node.scopo + "\"")
+                });
+
+            break;
+        case 'personaggio':
+            // Aggiunge un pulsante per cancellare il nodo
+            infoSection.append("button")
+                .attr("class", "delete-button")
+                .text("Cancella personaggio")
+                .on("click", function () {
+                    graphManager.deleteNodeDraw(id)
+                    graphManager.deleteNode(id)
+                    infoSection.remove();
+                });
+            infoSection.append("br")
+            // Aggiunge le informazioni del nodo alla sezione delle informazioni
+            infoSection.append("label")
+                .text("Nome:");
+
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.nome)
+                .on("change", function () {
+                    node.nome = d3.select(this).property("value");
+                    h2.text(node.nome);
+                    svg.selectAll(".node-label")
+                        .filter(function (d) { return d.id === node.id; })
+                        .text(node.nome);
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il nome del nodo personaggio di id ", node.id, " in ", "\"" + node.nome + "\"")
+                });
+
+            infoSection.append("label")
+                .text("Giocatore:");
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.giocatore)
+                .on("change", function () {
+                    node.giocatore = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il giocatore del nodo personaggio di id ", node.id, " in ", "\"" + node.giocatore + "\"")
+                });
+            infoSection.append("label")
+                .text("Colore:");
+            infoSection.append("br")
+            infoSection.append("input")
+                .attr("type", "color")
+                .attr("value", node.color)
+                .on("input", function () {
+                    node.color = d3.select(this).property("value");
+                    svg.selectAll(".node")
+                        .filter(function (d) { return d.id === id; })
+                        .attr("fill", node.color);
+                    console.log("Ho cambiato il colore del nodo personaggio di id ", node.id, " in ", node.color)
                 });
 
             infoSection.append("br")
@@ -91,7 +152,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.ruolo = d3.select(this).property("value")
                     console.log(nodesMap)
-                    console.log("Ho cambiato il ruolo del nodo di id ", node.id, " in ", "\"" + node.ruolo + "\"")
+                    console.log("Ho cambiato il ruolo del nodo personaggio di id ", node.id, " in ", "\"" + node.ruolo + "\"")
                 });
 
             infoSection.append("label")
@@ -102,7 +163,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.tratti = d3.select(this).property("value")
                     console.log(nodesMap)
-                    console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.tratti + "\"")
+                    console.log("Ho cambiato i tratti del nodo personaggio di id ", node.id, " in ", "\"" + node.tratti + "\"")
                 });
 
             infoSection.append("label")
@@ -114,7 +175,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.età = d3.select(this).property("value")
                     console.log(nodesMap)
-                    console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.età + "\"")
+                    console.log("Ho cambiato i tratti del nodo personaggio di id ", node.id, " in ", "\"" + node.età + "\"")
                 });
             infoSection.append("br")
             infoSection.append("label")
@@ -124,7 +185,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.movente = d3.select(this).property("value");
                     console.log(nodesMap)
-                    console.log("Ho cambiato il movente del nodo di id ", node.id, " in ", "\"" + node.movente + "\"")
+                    console.log("Ho cambiato il movente del nodo personaggio di id ", node.id, " in ", "\"" + node.movente + "\"")
                 });
 
             infoSection.append("label")
@@ -134,7 +195,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.info = d3.select(this).property("value");
                     console.log(nodesMap)
-                    console.log("Ho cambiato le info del nodo di id ", node.id, " in ", "\"" + node.info + "\"")
+                    console.log("Ho cambiato le info del nodo personaggio di id ", node.id, " in ", "\"" + node.info + "\"")
                 });
 
             infoSection.append("label")
@@ -144,7 +205,7 @@ export function createInfoSection(id) {
                 .on("change", function () {
                     node.background = d3.select(this).property("value");
                     console.log(nodesMap)
-                    console.log("Ho cambiato il background del nodo di id ", node.id, " in ", "\"" + node.background + "\"")
+                    console.log("Ho cambiato il background del nodo personaggio di id ", node.id, " in ", "\"" + node.background + "\"")
                 });
             break;
 
@@ -173,7 +234,7 @@ export function createLinkInfoSection(id) {
         .text(link.source.nome + " " + link.label + " " + link.target.nome)
 
 
-    // Aggiungi un pulsante per chiudere la sezione delle informazioni
+    // Aggiunge un pulsante per chiudere la sezione delle informazioni
     infoSection.append("button")
         .attr("class", "close-button")
         .text("X")
@@ -181,7 +242,7 @@ export function createLinkInfoSection(id) {
             infoSection.remove();
         });
 
-    // Aggiungi un pulsante per cancellare il link
+    // Aggiunge un pulsante per cancellare il link
     infoSection.append("button")
         .attr("class", "delete-button")
         .text("Cancella link")
@@ -190,7 +251,7 @@ export function createLinkInfoSection(id) {
             infoSection.remove();
         });
 
-    // Aggiungi le informazioni del link alla sezione delle informazioni
+    // Aggiunge le informazioni del link alla sezione delle informazioni
     infoSection.append("br");
     infoSection.append("label")
         .text("Label:");
@@ -209,15 +270,15 @@ export function createLinkInfoSection(id) {
         });
     infoSection.append("label")
         .text("Colore:");
+    infoSection.append("br")
     infoSection.append("input")
         .attr("type", "color")
         .attr("value", link.color)
         .on("input", function () {
-            var newColor = d3.select(this).property("value");
-            link.color = newColor;
+            link.color = d3.select(this).property("value");
             svg.selectAll(".link")
                 .filter(function (d) { return d.id === id; })
-                .attr("stroke", newColor);
+                .style("stroke", link.color);
             console.log("Ho cambiato il colore del link di id ", link.id, " in ", link.color)
         });
 

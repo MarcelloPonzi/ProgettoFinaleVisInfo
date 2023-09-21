@@ -24,8 +24,14 @@ window.addEventListener('DOMContentLoaded', async function () {
     loadTestGraphButton.remove()
   })
   saveFileButton.addEventListener("click", function () { graphManager.saveJSONToFile() })
-  //TODO DOPO AVER FATTO INFO SECTION PER OGGETTO
+
   loadTestGraphButton.addEventListener("click", async function () {
+    const fileName = "testGraph.json";
+    const testGraphData = await loadGraphData(fileName);
+    initializeGraph(testGraphData)
+    openFileButton.remove()
+    newGraphButton.remove()
+    loadTestGraphButton.remove()
   });
 
   openFileButton.addEventListener("click", async function () {
@@ -38,6 +44,7 @@ window.addEventListener('DOMContentLoaded', async function () {
       initializeGraph(jsonData)
       openFileButton.remove()
       newGraphButton.remove()
+      loadTestGraphButton.remove()
     } catch (error) {
       console.error("Errore durante il caricamento del file:", error);
     }
@@ -95,6 +102,10 @@ function initializeGraph(jsonData) {
     drawNodesElements();
     drawNodesLabels();
     simulationForce();
+
+    // Aggiunge lo zoom
+    var graphSvg = document.getElementById("graph")
+    addZoomListener(graphSvg);
   }
 }
 
@@ -263,25 +274,49 @@ export function drawLinkLabels() {
     .raise();
 }
 
-// Funzione di callback per mostrare la finestra pop-up
 function showInfoPopup(id) {
-  // Crea un elemento div per la finestra pop-up
-  var popup = document.createElement("div");
-  var nodo = nodesMap.get(id)
-  popup.className = "popup";
-  popup.innerHTML =
-    "<span class='popup-text'>Nome personaggio:</span> " + nodo.nome + "<br>" +
-    nodo.tipo + "<span class='popup-text'> interpretato da </span>" + nodo.giocatore + "<br>" +
-    "<span class='popup-text'>Ruolo:</span> " + nodo.ruolo + "<br>" +
-    "<span class='popup-text'>Età:</span> " + nodo.età + "<br>" +
-    "<span class='popup-text'>Tratti:</span> " + nodo.tratti + "<br>" +
-    "<span class='popup-text'>Movente:</span> " + nodo.movente;
 
-  // Posiziona la finestra pop-up sopra il nodo corrente
-  popup.style.top = (nodo.y + parentElement.offsetTop - 150) + "px";
-  popup.style.left = (nodo.x + parentElement.offsetLeft - 100) + "px";
-  // Aggiungi la finestra pop-up al documento
+  var popup = document.createElement("div");
+  var nodo = nodesMap.get(id);
+  popup.className = "popup";
+
+  var popupContent = document.createElement("div");
+
+  switch (nodo.tipo) {
+    case "personaggio":
+      appendPopupField(popupContent, "Nome personaggio:", nodo.nome);
+      appendPopupField(popupContent, nodo.tipo + " interpretato da ", nodo.giocatore);
+      appendPopupField(popupContent, "Ruolo:", nodo.ruolo);
+      appendPopupField(popupContent, "Età:", nodo.età);
+      appendPopupField(popupContent, "Tratti:", nodo.tratti);
+      appendPopupField(popupContent, "Movente:", nodo.movente);
+      popup.appendChild(popupContent);
+      popup.style.top = (nodo.y + parentElement.offsetTop - parentWidth / 15) + "px";
+      popup.style.left = (nodo.x + parentElement.offsetLeft - parentWidth / 20) + "px";
+      break;
+
+    case "oggetto":
+
+      appendPopupField(popupContent, "Nome oggetto:", nodo.nome);
+      appendPopupField(popupContent, "Descrizione:", nodo.descrizione);
+      popup.appendChild(popupContent);
+      popup.style.top = (nodo.y + parentElement.offsetTop - parentWidth / 30) + "px";
+      popup.style.left = (nodo.x + parentElement.offsetLeft - parentWidth / 30) + "px";
+      break;
+
+    default:
+      popupContent.textContent = "Tipo nodo non riconosciuto";
+      break;
+  }
+
   document.body.appendChild(popup);
+}
+
+function appendPopupField(container, label, value) {
+  var field = document.createElement("div");
+  field.className = "popup-field";
+  field.innerHTML = "<span class='popup-text'>" + label + "</span> " + value;
+  container.appendChild(field);
 }
 
 // Funzione di callback per nascondere la finestra pop-up
@@ -416,7 +451,7 @@ function resetLink(event) {
   var link = d3.select(event.currentTarget)
   link.transition()
     .duration(100)
-    .style("stroke-width", "5px")
+    .style("stroke-width", "7px")
     .style("stroke", function (d) { return d.color; });
 }
 
@@ -439,6 +474,25 @@ function resetNode(event) {
     .style("stroke", "black");
 }
 
+function addZoomListener(svgElement) {
+  var scaleFactor = 0.8;
+  var zoomSpeed = 0.1;
+
+  svgElement.addEventListener("wheel", function (event) {
+    event.preventDefault();
+
+    var zoomDirection = event.deltaY > 0 ? -1 : 1;
+
+    scaleFactor += zoomDirection * zoomSpeed;
+
+    // Impedisci lo zoom in eccesso
+    scaleFactor = Math.max(0.1, Math.min(3.0, scaleFactor));
+
+    // Applica la trasformazione di scala all'SVG
+    svgElement.style.transform = "scale(" + scaleFactor + ")";
+  });
+}
+
 /*-------------------------------------------------------------------
  
                        FUNZIONI GESTIONE FILES    
@@ -449,28 +503,36 @@ function resetNode(event) {
 async function chooseFile() {
   return new Promise((resolve) => {
     console.log("Scegli un file");
-    // Crea un elemento input di tipo file
     var input = document.createElement("input");
     input.type = "file";
-    input.accept = ".json"; // Accetta solo file con estensione .json
-
-    // Aggiungi un listener per l'evento change
+    input.accept = ".json";
     input.addEventListener("change", async function () {
-      // Ottieni il file selezionato dall'utente
       var file = this.files[0];
 
-      // Leggi il contenuto del file utilizzando un FileReader
       var reader = new FileReader();
       reader.onload = function (event) {
-        // Risolvi la promessa con il contenuto del file
         resolve(event.target.result);
       };
       reader.readAsText(file);
     });
-
-    // Aggiungi l'elemento input al DOM e apri la finestra di selezione del file
     input.click();
   });
+}
+
+// Funzione per caricare i dati del grafico da un file JSON
+async function loadGraphData(fileName) {
+  try {
+    const response = await fetch(fileName);
+    if (!response.ok) {
+      throw new Error("Errore durante il caricamento del file JSON.");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Si è verificato un errore durante il caricamento del file JSON:", error);
+    throw error;
+  }
 }
 
 

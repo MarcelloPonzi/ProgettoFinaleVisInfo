@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "tipo": "personaggio",
+      "nome": "Michela Portello",
+      "giocatore": "Elisabetta G.",
+      "ruolo": "To edit",
+      "background": "To edit",
+      "info": "To edit",
+      "tratti": "To edit",
+      "età": "To edit",
+      "movente": "To edit",
+      "color": "#ef2eb2"
+    },
+    {
+      "id": 2,
+      "tipo": "oggetto",
+      "nome": "Machete",
+      "descrizione": "Un grosso machete arrugginito",
+      "scopo": "È l'arma del delitto",
+      "color": "#c4c4c4",
+      "immagine": ""
+    },
+    {
+      "id": 3,
+      "tipo": "personaggio",
+      "nome": "Claudio Calpurni",
+      "giocatore": "Marcello P.",
+      "ruolo": "To edit",
+      "background": "To edit",
+      "info": "To edit",
+      "tratti": "To edit",
+      "età": "45",
+      "movente": "To edit",
+      "color": "#9d6262"
+    },
+    {
+      "id": 4,
+      "tipo": "oggetto",
+      "nome": "Candelabro",
+      "descrizione": "Un candelabro d'ottone con delle macchie di sangue.",
+      "scopo": "Se i giocatori notano le macchie di sangue possono capire che lì vicino è avvenuto l'omicidio di Claudio.",
+      "color": "#949d1b",
+      "immagine": ""
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "source": 1,
+      "target": 2,
+      "color": "#c00000",
+      "label": "Usa",
+      "info": "Impugna con la mano non dominante",
+      "type": 0
+    },
+    {
+      "id": 2,
+      "source": 1,
+      "target": 3,
+      "color": "#c00000",
+      "label": "Uccide",
+      "info": "Michela Portello uccide per con vari colpi Claudio nella stanza da ballo.",
+      "type": 0
+    },
+    {
+      "id": 3,
+      "source": 3,
+      "target": 4,
+      "color": "#dd75ea",
+      "label": "Fa cadere",
+      "info": "Mentre viene assassinato Claudio sporca di sangue e fa cadere il candelabro.",
+      "type": 0
+    }
+  ]
+}
