@@ -15,13 +15,19 @@ window.addEventListener('DOMContentLoaded', async function () {
   var openFileButton = document.getElementById("openFileButton");
   var saveFileButton = document.getElementById("saveFileButton");
   var newGraphButton = document.getElementById("newGraphButton");
+  var loadTestGraphButton = document.getElementById("loadTestGraphButton");
 
   newGraphButton.addEventListener("click", function () {
     initializeGraph()
     openFileButton.remove()
     newGraphButton.remove()
+    loadTestGraphButton.remove()
   })
   saveFileButton.addEventListener("click", function () { graphManager.saveJSONToFile() })
+  //TODO DOPO AVER FATTO INFO SECTION PER OGGETTO
+  loadTestGraphButton.addEventListener("click", async function () {
+  });
+
   openFileButton.addEventListener("click", async function () {
     try {
       // Chiamata a chooseFile() e attesa della risoluzione della promessa
@@ -299,7 +305,7 @@ function createNodePopup(event) {
     .style("position", "absolute")
     .style("left", event.clientX + "px")
     .style("top", event.clientY + "px");
-
+  popup.append("br");
   // Aggiungi del testo al popup
   popup.append("button")
     .text("Crea nodo Personaggio qui")
@@ -309,7 +315,7 @@ function createNodePopup(event) {
       popup.remove()
       graphManager.createNode(x, y, "personaggio");
     });
-
+  popup.append("br");
   popup.append("button")
     .text("Crea nodo Oggetto qui")
     .on("click", function () {
@@ -319,11 +325,10 @@ function createNodePopup(event) {
       graphManager.createNode(x, y, "oggetto");
     });
 
-
-
   // Aggiungi un pulsante per chiudere il popup
   popup.append("button")
-    .text("Chiudi")
+    .attr("class", "close-button")
+    .text("X")
     .on("click", function () {
       popup.remove();
     });
@@ -339,7 +344,8 @@ function createLinkPopup(event, id) {
     .style("left", event.clientX + "px")
     .style("top", event.clientY + "px");
 
-  // Aggiungi del testo al popup
+  // Aggiunge del testo al popup
+  popup.append("br");
   popup.append("button")
     .text("Crea relazione per questo nodo")
     .on("click", function () {
@@ -347,12 +353,13 @@ function createLinkPopup(event, id) {
       var y = event.clientY;
       popup.remove()
       var nodeSource = nodesMap.get(id)
-      graphManager.createLink(nodeSource, nodesMap, links, linksIds, linksMap);
+      graphManager.createLink(nodeSource);
     });
 
   // Aggiungi un pulsante per chiudere il popup
   popup.append("button")
-    .text("Chiudi")
+    .attr("class", "close-button")
+    .text("X")
     .on("click", function () {
       popup.remove();
     });

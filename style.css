@@ -64,8 +64,8 @@ html, body {
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0;
+  right: 0;
   font-size: 20px;
   border: none;
   background-color: #ff0000;
@@ -89,6 +89,11 @@ html, body {
 .node {
   stroke: black;
   stroke-width: 2px;
+}
+.node.personaggio{
+}
+
+.node.oggetto{
 }
 
 .link {

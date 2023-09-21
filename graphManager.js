@@ -142,6 +142,7 @@ function setUpNodeObject(x, y) {
         descrizione: "To edit",
         scopo: "To edit",
         color: DEFAULT_OBJECT_COLOR,
+        immagine: "",
         x: x,
         y: y
     }
@@ -151,10 +152,10 @@ function setUpNodeObject(x, y) {
 function setUpLink(nodeSource) {
     return new Promise(function (resolve, reject) {
         var nodeTarget;
-        var circles = d3.selectAll("circle");
+        var selectedNodes = d3.selectAll(".node");
         var clickListener = function (event, d) {
             // Rimuovi il listener di click aggiunto da esecuzioneAsincrona()
-            circles.on("click", null);
+            selectedNodes.on("click", null);
 
             // Aggiorna il nodo di destinazione con l'id del node cliccato
             nodeTarget = nodesMap.get(d.id);
@@ -169,13 +170,13 @@ function setUpLink(nodeSource) {
                 info: "To edit",
                 type: 0
             };
-            circles.on("click", null);
-            circles.on("click", function (event, d) { createInfoSection(d.id) })
+            selectedNodes.on("click", null);
+            selectedNodes.on("click", function (event, d) { createInfoSection(d.id) })
             // Risolvi la promessa con il link creato
             resolve(link);
         };
         // Aggiungi il listener di click ai circle
-        circles.on("click", clickListener);
+        selectedNodes.on("click", clickListener);
     });
 }
 
@@ -189,35 +190,23 @@ export function saveJSONToFile() {
 
     // Aggiungi i nodi al file JSON
     nodesMap.forEach(function (node) {
-        var nodeData = {
-            id: node.id,
-            nome: node.nome,
-            giocatore: node.giocatore,
-            ruolo: node.ruolo,
-            tipo: node.tipo,
-            background: node.background,
-            info: node.info,
-            tratti: node.tratti,
-            età: node.età,
-            movente: node.movente,
-            color: node.color
-        };
-
+        var nodeData = {};
+        for (var key in node) {
+            if (node.hasOwnProperty(key)) {
+                nodeData[key] = node[key];
+            }
+        }
         data.nodes.push(nodeData);
     });
 
     // Aggiungi i link al file JSON
     linksMap.forEach(function (link) {
-        var linkData = {
-            id: link.id,
-            source: link.source.id,
-            target: link.target.id,
-            color: link.color,
-            label: link.label,
-            info: link.info,
-            type: link.type
-        };
-
+        var linkData = {};
+        for (var key in link) {
+            if (link.hasOwnProperty(key)) {
+                linkData[key] = link[key];
+            }
+        }
         data.links.push(linkData);
     });
 

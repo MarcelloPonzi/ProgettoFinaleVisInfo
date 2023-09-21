@@ -26,122 +26,133 @@ export function createInfoSection(id) {
             infoSection.remove();
         });
 
-    // Aggiungi un pulsante per cancellare il node
-    infoSection.append("button")
-        .attr("class", "delete-button")
-        .text("Cancella personaggio")
-        .on("click", function () {
-            graphManager.deleteNodeDraw(id)
-            graphManager.deleteNode(id)
-            infoSection.remove();
-        });
-    infoSection.append("br")
-    // Aggiungi le informazioni del node alla sezione delle informazioni
-    infoSection.append("label")
-        .text("Nome:");
+    switch (node.tipo) {
+        case 'oggetto':
 
-    infoSection.append("input")
-        .attr("type", "text")
-        .attr("value", node.nome)
-        .on("change", function () {
-            node.nome = d3.select(this).property("value");
-            h2.text(node.nome);
-            svg.selectAll(".node-label")
-                .filter(function (d) { return d.id === node.id; })
-                .text(node.nome);
-            console.log(nodesMap)
-            console.log("Ho cambiato il nome del nodo di id ", node.id, " in ", "\"" + node.nome + "\"")
-        });
+            break;
+        case 'personaggio':
+            // Aggiungi un pulsante per cancellare il nodo
+            infoSection.append("button")
+                .attr("class", "delete-button")
+                .text("Cancella personaggio")
+                .on("click", function () {
+                    graphManager.deleteNodeDraw(id)
+                    graphManager.deleteNode(id)
+                    infoSection.remove();
+                });
+            infoSection.append("br")
+            // Aggiungi le informazioni del node alla sezione delle informazioni
+            infoSection.append("label")
+                .text("Nome:");
 
-    infoSection.append("label")
-        .text("Giocatore:");
-    infoSection.append("input")
-        .attr("type", "text")
-        .attr("value", node.giocatore)
-        .on("change", function () {
-            node.giocatore = d3.select(this).property("value")
-            console.log(nodesMap)
-            console.log("Ho cambiato il giocatore del nodo di id ", node.id, " in ", "\"" + node.giocatore + "\"")
-        });
-    infoSection.append("label")
-        .text("Colore:");
-    infoSection.append("br")
-    infoSection.append("input")
-        .attr("type", "color")
-        .attr("value", node.color)
-        .on("input", function () {
-            node.color = d3.select(this).property("value");
-            svg.selectAll(".node")
-                .filter(function (d) { return d.id === id; })
-                .attr("fill", node.color);
-            console.log("Ho cambiato il colore del nodo di id ", node.id, " in ", node.color)
-        });
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.nome)
+                .on("change", function () {
+                    node.nome = d3.select(this).property("value");
+                    h2.text(node.nome);
+                    svg.selectAll(".node-label")
+                        .filter(function (d) { return d.id === node.id; })
+                        .text(node.nome);
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il nome del nodo di id ", node.id, " in ", "\"" + node.nome + "\"")
+                });
 
-    infoSection.append("br")
-    infoSection.append("label")
-        .text("Ruolo:");
-    infoSection.append("input")
-        .attr("type", "text")
-        .attr("value", node.ruolo)
-        .on("change", function () {
-            node.ruolo = d3.select(this).property("value")
-            console.log(nodesMap)
-            console.log("Ho cambiato il ruolo del nodo di id ", node.id, " in ", "\"" + node.ruolo + "\"")
-        });
+            infoSection.append("label")
+                .text("Giocatore:");
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.giocatore)
+                .on("change", function () {
+                    node.giocatore = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il giocatore del nodo di id ", node.id, " in ", "\"" + node.giocatore + "\"")
+                });
+            infoSection.append("label")
+                .text("Colore:");
+            infoSection.append("br")
+            infoSection.append("input")
+                .attr("type", "color")
+                .attr("value", node.color)
+                .on("input", function () {
+                    node.color = d3.select(this).property("value");
+                    svg.selectAll(".node")
+                        .filter(function (d) { return d.id === id; })
+                        .attr("fill", node.color);
+                    console.log("Ho cambiato il colore del nodo di id ", node.id, " in ", node.color)
+                });
 
-    infoSection.append("label")
-        .text("Tratti:");
-    infoSection.append("input")
-        .attr("type", "text")
-        .attr("value", node.tratti)
-        .on("change", function () {
-            node.tratti = d3.select(this).property("value")
-            console.log(nodesMap)
-            console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.tratti + "\"")
-        });
+            infoSection.append("br")
+            infoSection.append("label")
+                .text("Ruolo:");
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.ruolo)
+                .on("change", function () {
+                    node.ruolo = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il ruolo del nodo di id ", node.id, " in ", "\"" + node.ruolo + "\"")
+                });
 
-    infoSection.append("label")
-        .text("Età:");
-    infoSection.append("input")
-        .attr("type", "number")
-        .style("width", infoSection.width / 3)
-        .attr("value", node.età)
-        .on("change", function () {
-            node.età = d3.select(this).property("value")
-            console.log(nodesMap)
-            console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.età + "\"")
-        });
-    infoSection.append("br")
-    infoSection.append("label")
-        .text("Movente:");
-    infoSection.append("textarea")
-        .text(node.movente)
-        .on("change", function () {
-            node.movente = d3.select(this).property("value");
-            console.log(nodesMap)
-            console.log("Ho cambiato il movente del nodo di id ", node.id, " in ", "\"" + node.movente + "\"")
-        });
+            infoSection.append("label")
+                .text("Tratti:");
+            infoSection.append("input")
+                .attr("type", "text")
+                .attr("value", node.tratti)
+                .on("change", function () {
+                    node.tratti = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.tratti + "\"")
+                });
 
-    infoSection.append("label")
-        .text("Info:");
-    infoSection.append("textarea")
-        .text(node.info)
-        .on("change", function () {
-            node.info = d3.select(this).property("value");
-            console.log(nodesMap)
-            console.log("Ho cambiato le info del nodo di id ", node.id, " in ", "\"" + node.info + "\"")
-        });
+            infoSection.append("label")
+                .text("Età:");
+            infoSection.append("input")
+                .attr("type", "number")
+                .style("width", infoSection.width / 3)
+                .attr("value", node.età)
+                .on("change", function () {
+                    node.età = d3.select(this).property("value")
+                    console.log(nodesMap)
+                    console.log("Ho cambiato i tratti del nodo di id ", node.id, " in ", "\"" + node.età + "\"")
+                });
+            infoSection.append("br")
+            infoSection.append("label")
+                .text("Movente:");
+            infoSection.append("textarea")
+                .text(node.movente)
+                .on("change", function () {
+                    node.movente = d3.select(this).property("value");
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il movente del nodo di id ", node.id, " in ", "\"" + node.movente + "\"")
+                });
 
-    infoSection.append("label")
-        .text("Background:");
-    infoSection.append("textarea")
-        .text(node.background)
-        .on("change", function () {
-            node.background = d3.select(this).property("value");
-            console.log(nodesMap)
-            console.log("Ho cambiato il background del nodo di id ", node.id, " in ", "\"" + node.background + "\"")
-        });
+            infoSection.append("label")
+                .text("Info:");
+            infoSection.append("textarea")
+                .text(node.info)
+                .on("change", function () {
+                    node.info = d3.select(this).property("value");
+                    console.log(nodesMap)
+                    console.log("Ho cambiato le info del nodo di id ", node.id, " in ", "\"" + node.info + "\"")
+                });
 
+            infoSection.append("label")
+                .text("Background:");
+            infoSection.append("textarea")
+                .text(node.background)
+                .on("change", function () {
+                    node.background = d3.select(this).property("value");
+                    console.log(nodesMap)
+                    console.log("Ho cambiato il background del nodo di id ", node.id, " in ", "\"" + node.background + "\"")
+                });
+            break;
+
+        default:
+            console.error("Tipo non valido: " + node.tipo);
+            return;
+
+    }
 }
 
 export function createLinkInfoSection(id) {
