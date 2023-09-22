@@ -1,6 +1,7 @@
 import { nodes, nodesMap, links, linksMap } from './app.js'
 import * as graphManager from './graphManager.js'
 import { svg } from './globalVariables.js'
+import { toggleArrowheadVisibility } from './app.js';
 
 export function createInfoSection(id) {
     var node = nodesMap.get(id);
@@ -288,7 +289,7 @@ export function createLinkInfoSection(id) {
 
     var tipoLabel = infoSection.append("span")
         .attr("class", "tipo-label")
-        .text(link.tipo === 1 ? "univoca" : "biunivoca");
+        .text(link.diretto === 1 ? "univoca" : "biunivoca");
 
     var tipoSwitch = infoSection.append("label")
         .attr("class", "switch");
@@ -296,10 +297,11 @@ export function createLinkInfoSection(id) {
     tipoSwitch.append("input")
         .attr("type", "checkbox")
         .attr("class", "tipo-switch")
-        .property("checked", link.tipo === 1)
+        .property("checked", link.diretto === 1)
         .on("change", function () {
-            link.tipo = this.checked ? 1 : 0;
-            tipoLabel.text(link.tipo === 1 ? "univoca" : "biunivoca");
+            link.diretto = this.checked ? 1 : 0;
+            toggleArrowheadVisibility(id);
+            tipoLabel.text(link.diretto === 1 ? "biunivoca" : "univoca");
         });
 
     tipoSwitch.append("span")

@@ -163,7 +163,7 @@ function setUpLink(nodeSource) {
                 color: DEFAULT_LINK_COLOR,
                 label: "To edit",
                 info: "To edit",
-                type: 0
+                diretto: 1
             };
             selectedNodes.on("click", null);
             selectedNodes.on("click", function (event, d) { createInfoSection(d.id) })
@@ -232,7 +232,7 @@ export function saveJSONToFile() {
             color: link.color,
             label: link.label,
             info: link.info,
-            type: link.type
+            diretto: link.diretto
         };
         data.links.push(linkData);
     });

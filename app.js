@@ -249,18 +249,37 @@ export function drawNodesLabels() {
     .raise();
 }
 
+
 export function drawLinkElements() {
+  svg.append("defs")
+    .append("marker")
+    .attr('id', "arrow")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", graphWidth / 150)
+    .attr("class", "line")
+    .attr("orient", "auto-start-reverse")
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .attr("fill", "black");
+
+  // Crea le linee e assegna il marker appropriato
   svg.selectAll(".link")
     .data(links)
     .enter()
-    .insert("line")
+    .append("line")
+    .attr("id", function (d) { return "line-" + d.id; })
     .attr("class", "link")
     .attr("stroke", function (d) { return d.color; })
-    .on("click", function (event, d) { createLinkInfoSection(d.id) })
+    .attr("marker-start", function (d) {
+      return d.diretto === 0 ? "url(#arrow)" : null;
+    })
+    .attr("marker-end", "url(#arrow)")
+    .on("click", function (event, d) { createLinkInfoSection(d.id); })
     .lower()
-    .on("mouseover", function (event, d) { enlargeLink(event) })
-    .on("mouseout", function (event, d) { resetLink(event) })
+    .on("mouseover", function (event, d) { enlargeLink(event); })
+    .on("mouseout", function (event, d) { resetLink(event); });
 }
+
 
 export function drawLinkLabels() {
   svg.selectAll(".link-label")
@@ -443,6 +462,8 @@ function dragEnd(event, d) {
 function enlargeLink(event) {
   console.log("Illumino link")
   var link = d3.select(event.currentTarget)
+
+
   link.transition()
     .duration(100)
     .style("stroke-width", "10px")
@@ -466,6 +487,7 @@ function changeNode(event) {
     .duration(100)
     .style("stroke-width", "5px")
     .style("stroke", "white");
+
 }
 
 // Funzione per cambiare colore al bordo del nodo
@@ -505,6 +527,19 @@ function drawGraphTitle(filePath) {
 
   document.body.appendChild(titleGraphDiv);
 }
+
+export function toggleArrowheadVisibility(lineId) {
+  var line = svg.select("#line-" + lineId);
+  var isBi = line.attr("marker-start") === "url(#arrow)";
+  if (isBi) {
+    line.attr("marker-start", null);
+    linksMap.get(lineId).diretto = 1;
+  } else {
+    line.attr("marker-start", "url(#arrow)");
+    linksMap.get(lineId).diretto = 0;
+  }
+}
+
 
 /*-------------------------------------------------------------------
  

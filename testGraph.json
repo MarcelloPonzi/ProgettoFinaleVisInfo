@@ -43,6 +43,19 @@
       "scopo": "Se i giocatori notano le macchie di sangue possono capire che lì vicino è avvenuto l'omicidio di Claudio.",
       "color": "#949d1b",
       "immagine": ""
+    },
+    {
+      "id": 5,
+      "tipo": "personaggio",
+      "nome": "Flavia Calpurni",
+      "giocatore": "Irene D.E.",
+      "ruolo": "To edit",
+      "background": "To edit",
+      "info": "To edit",
+      "tratti": "To edit",
+      "età": "To edit",
+      "movente": "To edit",
+      "color": "#57ea61"
     }
   ],
   "links": [
@@ -53,7 +66,7 @@
       "color": "#c00000",
       "label": "Usa",
       "info": "Impugna con la mano non dominante",
-      "type": 0
+      "diretto": 1
     },
     {
       "id": 2,
@@ -62,7 +75,7 @@
       "color": "#c00000",
       "label": "Uccide",
       "info": "Michela Portello uccide per con vari colpi Claudio nella stanza da ballo.",
-      "type": 0
+      "diretto": 1
     },
     {
       "id": 3,
@@ -71,7 +84,16 @@
       "color": "#dd75ea",
       "label": "Fa cadere",
       "info": "Mentre viene assassinato Claudio sporca di sangue e fa cadere il candelabro.",
-      "type": 0
+      "diretto": 1
+    },
+    {
+      "id": 4,
+      "source": 5,
+      "target": 3,
+      "color": "#2a8c93",
+      "label": "Fratelli",
+      "info": "To edit",
+      "diretto": 0
     }
   ]
 }
