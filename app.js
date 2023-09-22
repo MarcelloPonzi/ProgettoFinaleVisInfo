@@ -11,9 +11,6 @@ export var nodesIds;
 export var linksIds;
 var graphSvg = document.getElementById("graph");
 var graphWidth = graphSvg.clientWidth;
-var scaleFactor;
-
-
 
 window.addEventListener('DOMContentLoaded', async function () {
   var openFileButton = document.getElementById("openFileButton");
@@ -30,12 +27,14 @@ window.addEventListener('DOMContentLoaded', async function () {
   saveFileButton.addEventListener("click", function () { graphManager.saveJSONToFile() })
 
   loadTestGraphButton.addEventListener("click", async function () {
-    const fileName = "testGraph.json";
-    const testGraphData = await loadGraphData(fileName);
+    const filePath = "testGraph.json";
+    const testGraphData = await loadGraphData(filePath);
     initializeGraph(testGraphData)
     openFileButton.remove()
     newGraphButton.remove()
     loadTestGraphButton.remove()
+
+    drawGraphTitle(filePath)
   });
 
   openFileButton.addEventListener("click", async function () {
@@ -277,6 +276,7 @@ export function drawLinkLabels() {
     .raise();
 }
 
+
 function showInfoPopup(id) {
 
   var popup = document.createElement("div");
@@ -317,7 +317,7 @@ function showInfoPopup(id) {
 
 function appendPopupField(container, label, value) {
   var field = document.createElement("div");
-  field.className = "popup-field";
+  field.classList.add("popup-field");
   field.innerHTML = "<span class='popup-text'>" + label + "</span> " + value;
   container.appendChild(field);
 }
@@ -478,7 +478,7 @@ function resetNode(event) {
 }
 
 function addZoomListener(svgElement) {
-  scaleFactor = 0.8
+  var scaleFactor = 1.0;
   var zoomSpeed = 0.1;
 
   svgElement.addEventListener("wheel", function (event) {
@@ -491,9 +491,19 @@ function addZoomListener(svgElement) {
     // Impedisci lo zoom in eccesso
     scaleFactor = Math.max(0.1, Math.min(3.0, scaleFactor));
 
-    // Applica la trasformazione di scala all'SVG
-    svgElement.style.transform = "scale(" + scaleFactor + ")";
+    // Applica la trasformazione di scala solo all'SVG interno
+    svgElement.setAttribute("transform", "scale(" + scaleFactor + ")");
   });
+}
+
+function drawGraphTitle(filePath) {
+  var fileName = filePath.split('/').pop().split('.')[0];
+
+  var titleGraphDiv = document.createElement("div");
+  titleGraphDiv.textContent = fileName;
+  titleGraphDiv.classList.add("file-name");
+
+  document.body.appendChild(titleGraphDiv);
 }
 
 /*-------------------------------------------------------------------
@@ -514,6 +524,8 @@ async function chooseFile() {
 
       var reader = new FileReader();
       reader.onload = function (event) {
+        var fileName = file.name.split('.').slice(0, -1).join('.');
+        drawGraphTitle(fileName);
         resolve(event.target.result);
       };
       reader.readAsText(file);
