@@ -1,4 +1,4 @@
-import { nodes, nodesMap, links, linksMap, toggleArrowheadVisibility, centraNodo } from './app.js'
+import { nodes, nodesMap, links, linksMap, toggleArrowheadVisibility, centraNodo, decentraNodo } from './app.js'
 import * as graphManager from './graphManager.js'
 import { svg } from './globalVariables.js'
 
@@ -23,6 +23,12 @@ export function createInfoSection(id) {
         .text("Centra Nodo")
         .on("click", function () {
             centraNodo(id);
+        });
+    infoSection.append("button")
+        .attr("class", "center-button")
+        .text("Decentra Nodo")
+        .on("click", function () {
+            decentraNodo(id);
         });
 
     // Aggiunge un pulsante per chiudere la sezione delle informazioni

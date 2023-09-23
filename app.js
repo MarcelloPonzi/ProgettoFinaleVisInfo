@@ -3,12 +3,14 @@ import { createInfoSection, createLinkInfoSection } from "./infoSection.js"
 import * as idHandler from './idHandler.js'
 import * as graphManager from './graphManager.js'
 export var simulation;
+export var simulationCentered;
 export var links;
 export var nodes;
 export var nodesMap = new Map();
 export var linksMap = new Map();
 export var nodesIds;
 export var linksIds;
+var nodoCentrato = false;
 var graphSvg = document.getElementById("graph");
 var graphWidth = graphSvg.clientWidth;
 var graphHeight = graphSvg.clientHeight;
@@ -121,9 +123,9 @@ function initializeGraph(jsonData) {
 function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(graphWidth / 10))
-    .force("charge", d3.forceManyBody().strength(-100))
-    .force("center", d3.forceCenter(graphWidth / 2, parentHeight / 2))
+    .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(graphWidth / 8))
+    .force("charge", d3.forceManyBody().strength(-50))
+    .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
     .on("tick", function () { ticked() });
 }
 
@@ -499,15 +501,9 @@ function addZoomListener(svgElement) {
 
   svgElement.addEventListener("wheel", function (event) {
     event.preventDefault();
-
     var zoomDirection = event.deltaY > 0 ? -1 : 1;
-
     scaleFactor += zoomDirection * zoomSpeed;
-
-    // Impedisci lo zoom in eccesso
     scaleFactor = Math.max(0.1, Math.min(3.0, scaleFactor));
-
-    // Applica la trasformazione di scala solo all'SVG interno
     svgElement.setAttribute("transform", "scale(" + scaleFactor + ")");
   });
 }
@@ -534,66 +530,39 @@ export function toggleArrowheadVisibility(lineId) {
   }
 }
 
+// Funzione per centrare il nodo e fissarlo al centro
 export function centraNodo(idNodo) {
   var nodoDraw = svg.select("#node-" + idNodo);
   var nodo = nodesMap.get(idNodo);
-  var nodoDrawX
-  var nodoDrawY
+  var nodoDrawX;
+  var nodoDrawY;
   switch (nodo.tipo) {
     case "personaggio":
-      nodoDrawX = parseFloat(nodoDraw.attr("cx"))
-      nodoDrawY = parseFloat(nodoDraw.attr("cy"))
-      var translateX = graphWidth / 2 - nodoDrawX;
-      var translateY = graphHeight / 2 - nodoDrawY;
-      nodo.x += translateX;
-      nodo.y += translateY;
+      nodoDrawX = parseFloat(nodoDraw.attr("cx"));
+      nodoDrawY = parseFloat(nodoDraw.attr("cy"));
       break;
-
-
     case "oggetto":
-      nodoDrawX = parseFloat(nodoDraw.attr("x"))
-      nodoDrawY = parseFloat(nodoDraw.attr("y"))
-      var translateX = graphWidth / 2 - nodoDrawX;
-      var translateY = graphHeight / 2 - nodoDrawY;
-      nodo.x += translateX;
-      nodo.y += translateY;
+      nodoDrawX = parseFloat(nodoDraw.attr("x"));
+      nodoDrawY = parseFloat(nodoDraw.attr("y"));
       break;
   }
 
-  svg.selectAll(".link")
-    .filter(function (d) {
-      return d.source === idNodo || d.target === idNodo;
-    })
-    .attr("x1", function (d) {
-      return d.source.x;
-    })
-    .attr("y1", function (d) {
-      return d.source.y;
-    })
-    .attr("x2", function (d) {
-      return d.target.x;
-    })
-    .attr("y2", function (d) {
-      return d.target.y;
-    });
-
-
-  switch (nodo.tipo) {
-    case "personaggio":
-      nodoDraw.attr("cx", nodo.x)
-        .attr("cy", nodo.y);
-      break;
-    case "oggetto":
-      nodoDraw.attr("x", nodo.x)
-        .attr("y", nodo.y);
-      break;
-  }
-  simulation.alpha(0.3)
-
+  var translateX = graphWidth / 2 - nodoDrawX;
+  var translateY = graphHeight / 2 - nodoDrawY;
+  nodo.x += translateX;
+  nodo.y += translateY;
+  nodo.fx = graphWidth / 2;
+  nodo.fy = parentHeight / 2;
+  simulation.alpha(0.3).restart();
 }
 
-
-
+// Funzione per decentrare il nodo e rimuovere il fissaggio
+export function decentraNodo(idNodo) {
+  var nodo = nodesMap.get(idNodo);
+  nodo.fx = null;
+  nodo.fy = null;
+  simulation.alpha(0.5).restart();
+}
 
 
 /*-------------------------------------------------------------------
