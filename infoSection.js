@@ -1,7 +1,6 @@
-import { nodes, nodesMap, links, linksMap } from './app.js'
+import { nodes, nodesMap, links, linksMap, toggleArrowheadVisibility, centraNodo } from './app.js'
 import * as graphManager from './graphManager.js'
 import { svg } from './globalVariables.js'
-import { toggleArrowheadVisibility } from './app.js';
 
 export function createInfoSection(id) {
     var node = nodesMap.get(id);
@@ -18,6 +17,13 @@ export function createInfoSection(id) {
 
     var h2 = infoSection.append("h2")
         .text(node.nome);
+
+    infoSection.append("button")
+        .attr("class", "center-button")
+        .text("Centra Nodo")
+        .on("click", function () {
+            centraNodo(id);
+        });
 
     // Aggiunge un pulsante per chiudere la sezione delle informazioni
     infoSection.append("button")

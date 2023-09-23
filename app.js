@@ -11,6 +11,7 @@ export var nodesIds;
 export var linksIds;
 var graphSvg = document.getElementById("graph");
 var graphWidth = graphSvg.clientWidth;
+var graphHeight = graphSvg.clientHeight;
 
 window.addEventListener('DOMContentLoaded', async function () {
   var openFileButton = document.getElementById("openFileButton");
@@ -121,20 +122,12 @@ function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(graphWidth / 10))
-    .force("charge", d3.forceManyBody().strength(-50))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(graphWidth / 2, parentHeight / 2))
     .on("tick", function () { ticked() });
 }
 
 export function restartSimulation() {
-  /*   console.log("Ricomincio la simulazione, questo è lo stato dei dati")
-    console.log("Array nodes: ")
-    console.log(nodes)
-    console.log("Array links: ")
-    console.log(links)
-    console.log("Mappa nodi: ")
-    console.log(nodesMap)
-    console.log("Mappa links: ") */
   simulation.stop();
   simulationForce();
 }
@@ -205,6 +198,7 @@ export function drawNodesElements() {
     .attr("class", "node")
     .attr("fill", function (d) { return d.color; })
     .call(dragHandler)
+    .attr("id", function (d) { return "node-" + d.id; })
     .on("mouseover", function (event, d) {
       showInfoPopup(d.id)
       changeNode(event)
@@ -539,6 +533,43 @@ export function toggleArrowheadVisibility(lineId) {
     linksMap.get(lineId).diretto = 0;
   }
 }
+
+export function centraNodo(idNodo) {
+  var nodoDraw = svg.select("#node-" + idNodo);
+  var nodo = nodesMap.get(idNodo);
+  var nodoDrawX = parseFloat(nodoDraw.attr("cx"));
+  var nodoDrawY = parseFloat(nodoDraw.attr("cy"));
+  var translateX = graphWidth / 2 - nodoDrawX;
+  var translateY = graphHeight / 2 - nodoDrawY;
+
+  nodo.x += translateX;
+  nodo.y += translateY;
+
+  svg.selectAll(".link")
+    .filter(function (d) {
+      return d.source === idNodo || d.target === idNodo;
+    })
+    .attr("x1", function (d) {
+      return d.source.x;
+    })
+    .attr("y1", function (d) {
+      return d.source.y;
+    })
+    .attr("x2", function (d) {
+      return d.target.x;
+    })
+    .attr("y2", function (d) {
+      return d.target.y;
+    });
+
+  // Aggiorna la posizione del nodo disegnato
+  nodoDraw.attr("cx", nodo.x)
+    .attr("cy", nodo.y);
+
+}
+
+
+
 
 
 /*-------------------------------------------------------------------
