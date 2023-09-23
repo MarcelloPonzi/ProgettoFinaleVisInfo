@@ -1,10 +1,10 @@
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-  .file-name {
+.file-name {
     position: absolute;
     top: 5%; 
     left: 50%; 
@@ -12,26 +12,27 @@ html, body {
     font-size: 200%;
     font-weight: bold;
     font-family: "Arial", sans-serif;
-    background-color: #db7a0c;
+    background-color: #efa44e;
     color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+}
 
   
-  #svg-container {
+#svg-container {
     width: 90%;
     height: 90%;
-    margin: 0 auto
-  }
-
-  .graph-svg {
-    width: 100%;
-    height: 100%; 
-    background-color: rgba(0, 0, 255, 0.101); 
-    border: 4px solid #db7a0c; 
+    margin: 0 auto;
 }
+.graph-svg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(239, 239, 254);
+    border: 4px solid black;
+}
+  
 
 .core-button {
   display: inline-flex;
@@ -57,27 +58,39 @@ html, body {
 }
 
 
-  .info-section {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 20%; 
-    height: 100%;
-    background-color: #f1f1f1;
-    padding: 20px;
-    overflow-y: auto; 
-  }
+.info-section {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 20%; 
+  height: 100%;
+  border: 2px solid black;
+  background-color: #efa44e;
+  padding: 20px;
+  overflow-y: auto; 
+  border-radius: 4px;
+}
 
-
+.button{
+  font-size: 15px;
+  border: 2px solid black;
+  background-color:rgb(204, 202, 255);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 10px;
+}
 .close-button {
   position: absolute;
   top: 0;
   right: 0;
   font-size: 20px;
+  font-weight: bold;
   border: 2px solid black;
-  background-color: #db7a0c;
+  background-color: #efa44e;
   color: red;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .info-section input[type="text"] {
@@ -98,25 +111,50 @@ html, body {
   stroke: black;
   stroke-width: 2px;
 }
-.node.personaggio{
+
+.title-section{
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+  font-size: 40px;
+  color: white;
+}
+.text-section{
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+  color: white;
 }
 
-.node.oggetto{
+.select-node{
+  position: absolute;
+  top: 0%; 
+  left: 20%; 
+  transform: translateX(50%);
+  font-family: "Arial", sans-serif;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  font-size: 30px;
 }
 
 .link {
   stroke-width:7px;
 }
 
+.node-label {
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
 
-
-.info-label {
+.link-label {
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .popup {
   position: absolute;
   padding: 10px;
-  background-color: #db7a0c;
+  background-color: #efa44e;
   border: 2px solid black;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -138,7 +176,7 @@ html, body {
   padding: 10px;
   position: absolute;
   padding: 10px;
-  background-color: #db7a0c;
+  background-color: #efa44e;
   border: 2px solid black;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -149,7 +187,7 @@ html, body {
   padding: 10px;
   position: absolute;
   padding: 10px;
-  background-color: #db7a0c;
+  background-color: #efa44e;
   border: 2px solid black;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

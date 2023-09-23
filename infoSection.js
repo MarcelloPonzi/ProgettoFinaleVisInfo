@@ -16,16 +16,17 @@ export function createInfoSection(id) {
         .attr("class", "info-section");
 
     var h2 = infoSection.append("h2")
+        .classed("title-section", true)
         .text(node.nome);
 
     infoSection.append("button")
-        .attr("class", "center-button")
+        .attr("class", "button")
         .text("Centra Nodo")
         .on("click", function () {
             centraNodo(id);
         });
     infoSection.append("button")
-        .attr("class", "center-button")
+        .attr("class", "button")
         .text("Decentra Nodo")
         .on("click", function () {
             decentraNodo(id);
@@ -43,7 +44,7 @@ export function createInfoSection(id) {
         case 'oggetto':
             // Aggiunge un pulsante per cancellare il nodo
             infoSection.append("button")
-                .attr("class", "delete-button")
+                .attr("class", "button")
                 .text("Cancella oggetto")
                 .on("click", function () {
                     graphManager.deleteNodeDraw(id)
@@ -53,6 +54,7 @@ export function createInfoSection(id) {
             infoSection.append("br")
             // Aggiunge le informazioni del nodo alla sezione delle informazioni
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Nome:");
 
             infoSection.append("input")
@@ -69,6 +71,7 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Descrizione:");
             infoSection.append("input")
                 .attr("type", "text")
@@ -79,6 +82,7 @@ export function createInfoSection(id) {
                     console.log("Ho cambiato la descrizione del nodo oggetto di id ", node.id, " in ", "\"" + node.descrizione + "\"")
                 });
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Colore:");
             infoSection.append("br")
             infoSection.append("input")
@@ -94,6 +98,7 @@ export function createInfoSection(id) {
 
             infoSection.append("br")
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Scopo:");
             infoSection.append("textarea")
                 .text(node.scopo)
@@ -107,7 +112,7 @@ export function createInfoSection(id) {
         case 'personaggio':
             // Aggiunge un pulsante per cancellare il nodo
             infoSection.append("button")
-                .attr("class", "delete-button")
+                .attr("class", "button")
                 .text("Cancella personaggio")
                 .on("click", function () {
                     graphManager.deleteNodeDraw(id)
@@ -117,6 +122,7 @@ export function createInfoSection(id) {
             infoSection.append("br")
             // Aggiunge le informazioni del nodo alla sezione delle informazioni
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Nome:");
 
             infoSection.append("input")
@@ -133,7 +139,9 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Giocatore:");
+
             infoSection.append("input")
                 .attr("type", "text")
                 .attr("value", node.giocatore)
@@ -143,6 +151,7 @@ export function createInfoSection(id) {
                     console.log("Ho cambiato il giocatore del nodo personaggio di id ", node.id, " in ", "\"" + node.giocatore + "\"")
                 });
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Colore:");
             infoSection.append("br")
             infoSection.append("input")
@@ -158,6 +167,7 @@ export function createInfoSection(id) {
 
             infoSection.append("br")
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Ruolo:");
             infoSection.append("input")
                 .attr("type", "text")
@@ -169,6 +179,7 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Tratti:");
             infoSection.append("input")
                 .attr("type", "text")
@@ -180,6 +191,7 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Età:");
             infoSection.append("input")
                 .attr("type", "number")
@@ -192,6 +204,7 @@ export function createInfoSection(id) {
                 });
             infoSection.append("br")
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Movente:");
             infoSection.append("textarea")
                 .text(node.movente)
@@ -202,6 +215,7 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Info:");
             infoSection.append("textarea")
                 .text(node.info)
@@ -212,6 +226,7 @@ export function createInfoSection(id) {
                 });
 
             infoSection.append("label")
+                .classed("text-section", true)
                 .text("Background:");
             infoSection.append("textarea")
                 .text(node.background)

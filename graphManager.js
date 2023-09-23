@@ -68,9 +68,9 @@ export function deleteNode(id) {
 
 export function createLink(nodeSource) {
 
-    var messageDiv = d3.select("#svg-container")
+    var messageDiv = d3.select("body")
         .insert("div", ":first-child")
-        .attr("class", "select-target-node-message")
+        .attr("class", "select-node")
         .text("Clicca un altro nodo con cui creare la relazione");
 
     setUpLink(nodeSource)

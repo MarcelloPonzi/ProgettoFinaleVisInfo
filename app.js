@@ -10,7 +10,6 @@ export var nodesMap = new Map();
 export var linksMap = new Map();
 export var nodesIds;
 export var linksIds;
-var nodoCentrato = false;
 var graphSvg = document.getElementById("graph");
 var graphWidth = graphSvg.clientWidth;
 var graphHeight = graphSvg.clientHeight;
@@ -111,6 +110,10 @@ function initializeGraph(jsonData) {
 
     // Aggiunge lo zoom
     addZoomListener(graphSvg);
+
+    // Aggiunge il drag NON FUNZIONA
+    //dragSvg();
+
   }
 }
 
@@ -240,8 +243,6 @@ export function drawNodesLabels() {
     .attr("class", "node-label")
     .attr("id", function (d) { return d.id; })
     .attr("text-anchor", "middle")
-    .attr("font-size", "12px")
-    .attr("fill", "black")
     .raise();
 }
 
@@ -286,8 +287,6 @@ export function drawLinkLabels() {
     .attr("class", "link-label")
     .attr("id", function (d) { return d.id; })
     .attr("text-anchor", "middle")
-    .attr("font-size", "12px")
-    .attr("fill", "black")
     .raise();
 }
 
@@ -361,6 +360,7 @@ function createNodePopup(event) {
   popup.append("br");
   // Aggiungi del testo al popup
   popup.append("button")
+    .classed("button", true)
     .text("Crea nodo Personaggio qui")
     .on("click", function () {
       var x = event.clientX;
@@ -370,6 +370,7 @@ function createNodePopup(event) {
     });
   popup.append("br");
   popup.append("button")
+    .classed("button", true)
     .text("Crea nodo Oggetto qui")
     .on("click", function () {
       var x = event.clientX;
@@ -400,6 +401,7 @@ function createLinkPopup(event, id) {
   // Aggiunge del testo al popup
   popup.append("br");
   popup.append("button")
+    .classed("button", true)
     .text("Crea relazione per questo nodo")
     .on("click", function () {
       var x = event.clientX;
@@ -447,7 +449,6 @@ function dragging(event, d) {
 
 // Funzione di gestione dell'evento drag "end"
 function dragEnd(event, d) {
-  // Logica da eseguire alla fine del trascinamento
   if (!event.active) simulation.alphaTarget(0);
   d.fx = null;
   d.fy = null;
@@ -508,6 +509,35 @@ function addZoomListener(svgElement) {
   });
 }
 
+function dragSvg() {
+  var graphElement = document.getElementById("graph");
+  var isDragging = false;
+  var startCoords = { x: 0, y: 0 };
+
+  graphElement.addEventListener("mousedown", function (event) {
+    isDragging = true;
+    startCoords = { x: event.clientX, y: event.clientY };
+
+  });
+
+  graphElement.addEventListener("mousemove", function (event) {
+    if (isDragging) {
+      var deltaX = event.clientX - startCoords.x;
+      var deltaY = event.clientY - startCoords.y;
+      var svgChildren = Array.from(graphElement.children);
+
+      svgChildren.forEach(function (child) {
+        child.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+      });
+      startCoords = { x: event.clientX, y: event.clientY };
+    }
+  });
+
+  graphElement.addEventListener("mouseup", function () {
+    isDragging = false;
+  });
+}
+
 function drawGraphTitle(filePath) {
   var fileName = filePath.split('/').pop().split('.')[0];
 
@@ -563,6 +593,7 @@ export function decentraNodo(idNodo) {
   nodo.fy = null;
   simulation.alpha(0.5).restart();
 }
+
 
 
 /*-------------------------------------------------------------------
