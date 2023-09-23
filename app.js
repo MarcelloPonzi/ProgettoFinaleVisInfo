@@ -122,7 +122,7 @@ function simulationForce() {
   // Aggiorna la posizione dei nodi e dei link ad ogni iterazione
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(function (d) { return d.id; }).distance(graphWidth / 10))
-    .force("charge", d3.forceManyBody().strength(-500))
+    .force("charge", d3.forceManyBody().strength(-100))
     .force("center", d3.forceCenter(graphWidth / 2, parentHeight / 2))
     .on("tick", function () { ticked() });
 }
@@ -134,6 +134,7 @@ export function restartSimulation() {
 
 // Funzione di callback chiamata ad ogni aggiornamento delle posizioni dei nodi e dei link
 function ticked() {
+
   // Aggiorna le posizioni dei link
   svg.selectAll("line")
     .attr("x1", (d) => d.source.x)
@@ -154,7 +155,6 @@ function ticked() {
     .attr("y", function (d) {
       return d.y - (this.getAttribute("height") / 2);
     });
-
 
   // Aggiorna le posizioni delle etichette dei link
   svg.selectAll(".link-label")
@@ -537,13 +537,28 @@ export function toggleArrowheadVisibility(lineId) {
 export function centraNodo(idNodo) {
   var nodoDraw = svg.select("#node-" + idNodo);
   var nodo = nodesMap.get(idNodo);
-  var nodoDrawX = parseFloat(nodoDraw.attr("cx"));
-  var nodoDrawY = parseFloat(nodoDraw.attr("cy"));
-  var translateX = graphWidth / 2 - nodoDrawX;
-  var translateY = graphHeight / 2 - nodoDrawY;
+  var nodoDrawX
+  var nodoDrawY
+  switch (nodo.tipo) {
+    case "personaggio":
+      nodoDrawX = parseFloat(nodoDraw.attr("cx"))
+      nodoDrawY = parseFloat(nodoDraw.attr("cy"))
+      var translateX = graphWidth / 2 - nodoDrawX;
+      var translateY = graphHeight / 2 - nodoDrawY;
+      nodo.x += translateX;
+      nodo.y += translateY;
+      break;
 
-  nodo.x += translateX;
-  nodo.y += translateY;
+
+    case "oggetto":
+      nodoDrawX = parseFloat(nodoDraw.attr("x"))
+      nodoDrawY = parseFloat(nodoDraw.attr("y"))
+      var translateX = graphWidth / 2 - nodoDrawX;
+      var translateY = graphHeight / 2 - nodoDrawY;
+      nodo.x += translateX;
+      nodo.y += translateY;
+      break;
+  }
 
   svg.selectAll(".link")
     .filter(function (d) {
@@ -562,9 +577,18 @@ export function centraNodo(idNodo) {
       return d.target.y;
     });
 
-  // Aggiorna la posizione del nodo disegnato
-  nodoDraw.attr("cx", nodo.x)
-    .attr("cy", nodo.y);
+
+  switch (nodo.tipo) {
+    case "personaggio":
+      nodoDraw.attr("cx", nodo.x)
+        .attr("cy", nodo.y);
+      break;
+    case "oggetto":
+      nodoDraw.attr("x", nodo.x)
+        .attr("y", nodo.y);
+      break;
+  }
+  simulation.alpha(0.3)
 
 }
 
