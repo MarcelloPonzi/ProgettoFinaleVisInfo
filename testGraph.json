@@ -56,6 +56,37 @@
       "età": "To edit",
       "movente": "To edit",
       "color": "#57ea61"
+    },
+    {
+      "id": 6,
+      "tipo": "personaggio",
+      "nome": "Lea Serpi",
+      "giocatore": "To edit",
+      "ruolo": "To edit",
+      "background": "To edit",
+      "info": "To edit",
+      "tratti": "To edit",
+      "età": "To edit",
+      "movente": "To edit",
+      "color": "#0b00a8"
+    },
+    {
+      "id": 7,
+      "tipo": "oggetto",
+      "nome": "Tonico segreto",
+      "descrizione": "To edit",
+      "scopo": "To edit",
+      "color": "#4b98b9",
+      "immagine": ""
+    },
+    {
+      "id": 9,
+      "tipo": "oggetto",
+      "nome": "Bicchiere",
+      "descrizione": "To edit",
+      "scopo": "To edit",
+      "color": "#2cb0ba",
+      "immagine": ""
     }
   ],
   "links": [
@@ -94,6 +125,42 @@
       "label": "Fratelli",
       "info": "To edit",
       "diretto": 0
+    },
+    {
+      "id": 5,
+      "source": 6,
+      "target": 1,
+      "color": "yellow",
+      "label": "Ama",
+      "info": "To edit",
+      "diretto": 1
+    },
+    {
+      "id": 6,
+      "source": 6,
+      "target": 7,
+      "color": "yellow",
+      "label": "Ha versato",
+      "info": "To edit",
+      "diretto": 1
+    },
+    {
+      "id": 7,
+      "source": 9,
+      "target": 7,
+      "color": "#2b3130",
+      "label": "Contiene",
+      "info": "To edit",
+      "diretto": 1
+    },
+    {
+      "id": 8,
+      "source": 3,
+      "target": 9,
+      "color": "#adaf4b",
+      "label": "Beve da",
+      "info": "To edit",
+      "diretto": 1
     }
   ]
 }
