@@ -328,7 +328,7 @@ export function createLinkInfoSection(id) {
         .on("change", function () {
             link.diretto = this.checked ? 1 : 0;
             toggleArrowheadVisibility(id);
-            tipoLabel.text(link.diretto === 1 ? "biunivoca" : "univoca");
+            tipoLabel.text(link.diretto === 1 ? "univoca" : "biunivoca");
         });
 
     tipoSwitch.append("span")
